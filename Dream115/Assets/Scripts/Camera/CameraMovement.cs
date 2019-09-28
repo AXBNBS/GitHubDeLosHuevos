@@ -8,9 +8,8 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private GameObject followObj, camera, player;
-    private int speed, clampUp, clampDown, inputSensitivity;
-    private float xToPlayer, yToPlayer, zToPlayer, mouseX, mouseY, smoothX, smoothY, rotY, rotX;
+    [SerializeField] private int speed, clampUp, clampDown, inputSensitivity;
+    private float mouseX, mouseY, rotX, rotY;
     private Quaternion localRotation;
 
     
@@ -38,7 +37,7 @@ public class CameraMovement : MonoBehaviour
         rotY += mouseX * inputSensitivity * Time.deltaTime;
         rotX += mouseY * inputSensitivity * Time.deltaTime;
         rotX = Mathf.Clamp (rotX, clampDown, clampUp);
-        localRotation = Quaternion.Euler (rotX, rotY, 0.0f);
+        localRotation = Quaternion.Euler (rotX, rotY, 0);
         transform.rotation = localRotation;
     }
 
