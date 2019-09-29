@@ -25,6 +25,8 @@ public class Enemy : MonoBehaviour
     public Transform player;
 
     public List<Transform> visibleTargets = new List<Transform>();
+
+    int rayDistance = 10;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +38,7 @@ public class Enemy : MonoBehaviour
 
         light = light.GetComponent<Light>();
         auxTarget = target;
+
     }
 
     // Update is called once per frame
@@ -43,10 +46,32 @@ public class Enemy : MonoBehaviour
     {
         FindVisibleTargets();
         FollowRoute();
-        transform.Translate(new Vector3(0, 0, speed * Time.deltaTime));
-        var targetRotation = Quaternion.LookRotation(target.position - transform.position);
+        Move();
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, speed * Time.deltaTime);
+    }
+
+    private void Move()
+    {
+        transform.Translate(new Vector3(0, 0, speed * Time.deltaTime));
+        var lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+        var targetRotation = Quaternion.LookRotation(lookDirection);
+
+        var hit = new RaycastHit();
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, rayDistance))
+        {
+            if (!(hit.transform.gameObject.layer == obstacleMask))
+
+                Debug.DrawLine(transform.position, hit.point, Color.white);
+            else
+                Debug.DrawRay(transform.position, transform.forward * rayDistance, Color.green);
+            //lookDirection += hit.normal * new Vector3(20.0f,20.0f,20.0f);
+        }
+        else{
+            Debug.DrawRay(transform.position, transform.forward * rayDistance, Color.green);
+        }
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, speed * Time.deltaTime);
 
         if (visibleTargets.Count > 0)
         {
