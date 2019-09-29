@@ -17,6 +17,9 @@ public class Enemy : MonoBehaviour
 
     float viewRadius;
     float viewAngle;
+    float viewRadiusShoot; //Distancia donde dispararía el enemigo
+
+    public bool shooterEnemy; //Variable que indicará si el enemigo es de lejos o de cerca
 
     public LayerMask targetMask;
     public LayerMask obstacleMask;
@@ -28,6 +31,13 @@ public class Enemy : MonoBehaviour
     public List<Transform> visibleTargets = new List<Transform>();
 
     int rayDistance = 10;
+
+    public GameObject shot; //Objeto que se disparara
+    public Transform shotSpawn; //Spawn del disparo
+
+    private float fireRate = 3f; //Rate de disparo para que no este continuamente disparando
+    private float nextFire = 0f; //Tiempo que falta para el siguiente disparo
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +46,7 @@ public class Enemy : MonoBehaviour
 
         viewRadius = 30f;
         viewAngle = 120f;
+        viewRadiusShoot = viewRadius / 1.5f; //Distancia donde dispararía el enemigo
 
         light = light.GetComponent<Light>();
         auxTarget = target;
@@ -67,6 +78,12 @@ public class Enemy : MonoBehaviour
             light.color = Color.red;
             actualState = state.CHASE;
             target = player;
+
+            if (shooterEnemy && Vector3.Distance(transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
+            {
+                nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
+                Fire(); //Dispara
+            }
         }
         else
         {
@@ -107,6 +124,9 @@ public class Enemy : MonoBehaviour
 
         Gizmos.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
         Gizmos.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
+
+        Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
+        Gizmos.DrawWireSphere(transform.position, viewRadiusShoot); //Dibujo de distancia de disparo
     }
 
     private void FindVisibleTargets()
@@ -130,4 +150,8 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void Fire() //Disparo
+    {
+        Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
+    }
 }
