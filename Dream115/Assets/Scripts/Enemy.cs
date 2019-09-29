@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 {
 
     float speed = 5.0f;
+    float turnSpeed = 2.0f;
     public Transform target;
     Transform auxTarget;
 
@@ -53,25 +54,13 @@ public class Enemy : MonoBehaviour
     private void Move()
     {
         transform.Translate(new Vector3(0, 0, speed * Time.deltaTime));
-        var lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+        Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+
         var targetRotation = Quaternion.LookRotation(lookDirection);
 
-        var hit = new RaycastHit();
+        Quaternion targetRotationOnlyY = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.eulerAngles.y, transform.eulerAngles.z);
 
-        if (Physics.Raycast(transform.position, transform.forward, out hit, rayDistance))
-        {
-            if (!(hit.transform.gameObject.layer == obstacleMask))
-
-                Debug.DrawLine(transform.position, hit.point, Color.white);
-            else
-                Debug.DrawRay(transform.position, transform.forward * rayDistance, Color.green);
-            //lookDirection += hit.normal * new Vector3(20.0f,20.0f,20.0f);
-        }
-        else{
-            Debug.DrawRay(transform.position, transform.forward * rayDistance, Color.green);
-        }
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, speed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
 
         if (visibleTargets.Count > 0)
         {
