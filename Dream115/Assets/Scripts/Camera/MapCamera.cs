@@ -5,12 +5,13 @@ using UnityEngine;
 
 
 
+// I may actually use this sometime.
 public class MapCamera : MonoBehaviour
 {
     // Start is called before the first frame update.
     private void Start ()
     {
-        //this.GetComponent<Camera>().enabled = false;
+        
     }
 
 
