@@ -329,31 +329,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cdf81b6d9c2124f87dfedc9c2ff3a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowInput: 0
   target: {fileID: 800841157}
   speed: 0
   clampUp: 0
   clampDown: 0
   inputSensitivity: 0
---- !u!1 &582048584 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6554515646694090815, guid: 6a1d3f989c152144e8d5a665c98543dc,
-    type: 3}
-  m_PrefabInstance: {fileID: 6554515646946445222}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &582048588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582048584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 522b5d61eaf9ba14bb235626ae2ae3de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: []
-  shownText: {fileID: 107726881}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,6 +640,8 @@ GameObject:
   - component: {fileID: 935522233}
   - component: {fileID: 935522232}
   - component: {fileID: 935522231}
+  - component: {fileID: 935522236}
+  - component: {fileID: 935522235}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Interactable
@@ -740,6 +723,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &935522235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935522230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8999006dc2c4acb4ba3faa878cee031b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text:
+  - Hmmm... What kinda book is this? One trick pony...*Now that's the weird stuff
+    that would make a perfect gift for my son!
+--- !u!136 &935522236
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935522230}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 2
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1095,7 +1107,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1489709829
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1410,11 +1422,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
-    - target: {fileID: 6554515646694090815, guid: 6a1d3f989c152144e8d5a665c98543dc,
-        type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     - target: {fileID: 6554515646694090810, guid: 6a1d3f989c152144e8d5a665c98543dc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1470,6 +1477,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 582048588, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
+      propertyPath: shownText
+      value: 
+      objectReference: {fileID: 107726881}
+    - target: {fileID: 582048588, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
+      propertyPath: cameraRef
+      value: 
+      objectReference: {fileID: 504387306}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
 --- !u!1001 &6647216854445869880

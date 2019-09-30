@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
+    public bool allowInput;
     [SerializeField] private Transform target;
     [SerializeField] private int speed, clampUp, clampDown, inputSensitivity;
     private float mouseX, mouseY, rotX, rotY;
@@ -20,6 +21,7 @@ public class CameraMovement : MonoBehaviour
         //Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
 
+        allowInput = true;
         speed = 120;
         clampUp = +80;
         clampDown = -30;
@@ -32,8 +34,16 @@ public class CameraMovement : MonoBehaviour
     // Update is called once per frame.
     private void Update ()
     {
-        mouseX = Input.GetAxis ("Mouse X");
-        mouseY = Input.GetAxis ("Mouse Y");
+        if (allowInput == false)
+        {
+            mouseX = 0f;
+            mouseY = 0f;
+        }
+        else
+        {
+            mouseX = Input.GetAxis ("Mouse X");
+            mouseY = Input.GetAxis ("Mouse Y");
+        }
         rotY += mouseX * inputSensitivity * Time.deltaTime;
         rotX += mouseY * inputSensitivity * Time.deltaTime;
         rotX = Mathf.Clamp (rotX, clampDown, clampUp);

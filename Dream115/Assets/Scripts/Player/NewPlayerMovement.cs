@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class NewPlayerMovement : MonoBehaviour
 {
+    public bool allowInput;
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;
@@ -17,6 +18,7 @@ public class NewPlayerMovement : MonoBehaviour
     // Start is called before the first frame update.
     private void Start ()
     {
+        allowInput = true;
         walkSpd = 6;
         runSpd = 9;
         rotationSpd = 10;
@@ -30,8 +32,16 @@ public class NewPlayerMovement : MonoBehaviour
     // Update is called once per frame.
     private void Update ()
     {
-        inputH = Input.GetAxisRaw ("Horizontal");
-        inputV = Input.GetAxisRaw ("Vertical");
+        if (allowInput == false)
+        {
+            inputH = 0f;
+            inputV = 0f;
+        }
+        else
+        {
+            inputH = Input.GetAxisRaw ("Horizontal");
+            inputV = Input.GetAxisRaw ("Vertical");
+        }
 
         if (inputH != 0 || inputV != 0)
         {
