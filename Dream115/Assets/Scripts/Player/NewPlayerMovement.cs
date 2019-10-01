@@ -19,8 +19,8 @@ public class NewPlayerMovement : MonoBehaviour
     private void Start ()
     {
         allowInput = true;
-        walkSpd = 6;
-        runSpd = 9;
+        walkSpd = 10;
+        runSpd = 16;
         rotationSpd = 10;
         gravity = 8;
         movement = Vector3.zero;
