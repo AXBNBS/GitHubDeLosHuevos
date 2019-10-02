@@ -38,6 +38,8 @@ public class Enemy : MonoBehaviour
     private float fireRate = 3f; //Rate de disparo para que no este continuamente disparando
     private float nextFire = 0f; //Tiempo que falta para el siguiente disparo
 
+    private Animator animator; //El animator por si no habia quedado claro
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +53,7 @@ public class Enemy : MonoBehaviour
         light = light.GetComponent<Light>();
         auxTarget = target;
 
+        animator = this.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -78,6 +81,7 @@ public class Enemy : MonoBehaviour
             light.color = Color.red;
             actualState = state.CHASE;
             target = player;
+            animator.SetFloat("Speed", 12f);
 
             if (shooterEnemy && Vector3.Distance(transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
@@ -90,6 +94,7 @@ public class Enemy : MonoBehaviour
             light.color = Color.yellow;
             actualState = state.PATROL;
             target = auxTarget;
+            animator.SetFloat("Speed", 1f);
         }
     }
 
