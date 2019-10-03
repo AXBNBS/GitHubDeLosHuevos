@@ -65,6 +65,9 @@ public class NewPlayerMovement : MonoBehaviour
                 //Que hace sonidos
             }
         }
+
+        if (characterCtr.enabled == false) //Cuando mueres no puedes girar la camara
+            rotationSpd = 0;
     }
 
 
@@ -103,7 +106,6 @@ public class NewPlayerMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("Hola");
         if (invulnerability == false && collision.gameObject.tag == "Enemy")
         {
             playerLife.TakeDamage(40f);
