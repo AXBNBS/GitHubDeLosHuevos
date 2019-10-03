@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8903894972273410700}
   m_Layer: 0
   m_Name: LubinaEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,11 +43,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: lubina
       objectReference: {fileID: 0}
-    - target: {fileID: -6057140222963153312, guid: 84bf78fc2d209eb49916154d8abbec15,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: bbef676adbd07934b9fa689158c44141, type: 2}
     - target: {fileID: -4216859302048453862, guid: 84bf78fc2d209eb49916154d8abbec15,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -103,6 +98,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6057140222963153312, guid: 84bf78fc2d209eb49916154d8abbec15,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bbef676adbd07934b9fa689158c44141, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84bf78fc2d209eb49916154d8abbec15, type: 3}
 --- !u!4 &2730804290279783378 stripped

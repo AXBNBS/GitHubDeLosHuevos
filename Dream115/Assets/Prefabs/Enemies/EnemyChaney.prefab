@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8748211041554368558}
   m_Layer: 0
   m_Name: EnemyChaney
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,7 +44,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8748211041554368559}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 3
   m_Height: 7.393385
@@ -288,11 +288,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: chaney
       objectReference: {fileID: 0}
-    - target: {fileID: -6057140222963153312, guid: 36117ff43fd6773419f6034f26a2f5c2,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: ec70b24126727be4dbb6e60c4de6216e, type: 2}
     - target: {fileID: -4216859302048453862, guid: 36117ff43fd6773419f6034f26a2f5c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -348,21 +343,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: 36117ff43fd6773419f6034f26a2f5c2,
+    - target: {fileID: -6057140222963153312, guid: 36117ff43fd6773419f6034f26a2f5c2,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: 36117ff43fd6773419f6034f26a2f5c2,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: 36117ff43fd6773419f6034f26a2f5c2,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ec70b24126727be4dbb6e60c4de6216e, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 36117ff43fd6773419f6034f26a2f5c2, type: 3}
 --- !u!4 &4331714456652460162 stripped

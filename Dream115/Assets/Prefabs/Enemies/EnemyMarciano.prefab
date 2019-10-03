@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101006979885655648}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.79, z: 0}
   m_LocalScale: {x: 4.55077, y: 4.55077, z: 4.55077}
   m_Children: []
   m_Father: {fileID: 101006981010207944}
@@ -131,9 +131,10 @@ GameObject:
   m_Component:
   - component: {fileID: 101006981010207944}
   - component: {fileID: 101006981010207991}
+  - component: {fileID: 2775612940941549269}
   m_Layer: 0
   m_Name: EnemyMarciano
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -181,6 +182,20 @@ MonoBehaviour:
   visibleTargets: []
   shot: {fileID: 4800648197254437612, guid: 7b288224bcc06f9429d52a17f5d2a06d, type: 3}
   shotSpawn: {fileID: 101006979885655649}
+--- !u!136 &2775612940941549269
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101006981010207990}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 1
+  m_Height: 2.0090036
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.3358688, z: 0}
 --- !u!1 &101006981040601934
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,11 +288,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: marciano
       objectReference: {fileID: 0}
-    - target: {fileID: -6057140222963153312, guid: fa43b4fb3baa9064696951bc1febe823,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: e0914bc6e729ef14b8e074d5c763080b, type: 2}
     - target: {fileID: -4216859302048453862, guid: fa43b4fb3baa9064696951bc1febe823,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -333,16 +343,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: fa43b4fb3baa9064696951bc1febe823,
+    - target: {fileID: -6057140222963153312, guid: fa43b4fb3baa9064696951bc1febe823,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -4216859302048453862, guid: fa43b4fb3baa9064696951bc1febe823,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: e0914bc6e729ef14b8e074d5c763080b, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa43b4fb3baa9064696951bc1febe823, type: 3}
 --- !u!4 &4907918223555635755 stripped

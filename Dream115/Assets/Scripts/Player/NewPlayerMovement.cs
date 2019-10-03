@@ -14,6 +14,8 @@ public class NewPlayerMovement : MonoBehaviour
     private CharacterController characterCtr;
     private Animator animator;
 
+    private PlayerLife playerLife;
+    private bool invulnerability = false; //Invulnerabilidad
 
     // Start is called before the first frame update.
     private void Start ()
@@ -26,6 +28,8 @@ public class NewPlayerMovement : MonoBehaviour
         movement = Vector3.zero;
         characterCtr = this.GetComponent<CharacterController> ();
         animator = this.GetComponentInChildren<Animator> ();
+
+        playerLife = this.GetComponent<PlayerLife>();
     }
 
     
@@ -95,5 +99,22 @@ public class NewPlayerMovement : MonoBehaviour
         angle = Mathf.Atan2 (movement.x, movement.z) * Mathf.Rad2Deg;
         rotation = Quaternion.Euler (this.transform.rotation.x, angle, this.transform.rotation.z);
         this.transform.rotation = Quaternion.Lerp (this.transform.rotation, rotation, rotationSpd * Time.deltaTime);
+    }
+
+    void OnTriggerEnter(Collider collision)
+    {
+        Debug.Log("Hola");
+        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        {
+            playerLife.TakeDamage(40f);
+            invulnerability = true;
+            StartCoroutine(InvulnerabilityWaitTime());
+        }
+    }
+
+    IEnumerator InvulnerabilityWaitTime()
+    {
+        yield return new WaitForSeconds(2f);
+        invulnerability = false;
     }
 }
