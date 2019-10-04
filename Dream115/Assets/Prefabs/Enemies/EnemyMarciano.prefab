@@ -182,6 +182,7 @@ MonoBehaviour:
   visibleTargets: []
   shot: {fileID: 4800648197254437612, guid: 7b288224bcc06f9429d52a17f5d2a06d, type: 3}
   shotSpawn: {fileID: 101006979885655649}
+  enemies: []
 --- !u!136 &2775612940941549269
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -192,7 +193,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 1
+  m_Radius: 2.3
   m_Height: 2.0090036
   m_Direction: 1
   m_Center: {x: 0, y: 1.3358688, z: 0}

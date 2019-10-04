@@ -114,6 +114,16 @@ public class NewPlayerMovement : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay(Collider collision)
+    {
+        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        {
+            playerLife.TakeDamage(40f);
+            invulnerability = true;
+            StartCoroutine(InvulnerabilityWaitTime());
+        }
+    }
+
     IEnumerator InvulnerabilityWaitTime()
     {
         yield return new WaitForSeconds(2f);

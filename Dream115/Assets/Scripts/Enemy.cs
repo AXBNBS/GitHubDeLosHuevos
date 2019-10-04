@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
 {
 
     float speed = 5.0f;
-    float turnSpeed = 2.0f;
+    float turnSpeed = 4.0f;
     public Transform target;
     Transform auxTarget;
 
@@ -39,6 +39,10 @@ public class Enemy : MonoBehaviour
     private float nextFire = 0f; //Tiempo que falta para el siguiente disparo
 
     private Animator animator; //El animator por si no habia quedado claro
+
+    public Enemy[] enemies; //Cada enemigo guarda toda la lista de enemigos para llamarles si ve al personaje
+
+    float stoppingDistance = 3.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -81,12 +85,27 @@ public class Enemy : MonoBehaviour
             light.color = Color.red;
             actualState = state.CHASE;
             target = player;
-            animator.SetFloat("Speed", 12f);
-
+            foreach( Enemy enemy in enemies)
+            {
+                 enemy.light.color = Color.red;
+                 enemy.actualState = state.CHASE;
+                 enemy.target = player;
+            }
             if (shooterEnemy && Vector3.Distance(transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
                 nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
                 Fire(); //Dispara
+            }
+
+            if (Vector3.Distance(transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
+            {
+                animator.SetFloat("Speed", 0f);//Para de andar
+                speed = 0;//
+            }
+            else
+            {
+                animator.SetFloat("Speed", 12f);//Sigue persiguiendo al personaje
+                speed = 5.0f;
             }
         }
         else
