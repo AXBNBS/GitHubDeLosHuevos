@@ -6,7 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 
-    float speed = 5.0f;
+    public float speed = 5.0f;
     float turnSpeed = 4.0f;
     public Transform target;
     Transform auxTarget;
@@ -80,12 +80,12 @@ public class Enemy : MonoBehaviour
 
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
 
-        if (visibleTargets.Count > 0)
+        if (actualState==state.CHASE)
         {
             light.color = Color.red;
             actualState = state.CHASE;
             target = player;
-            foreach( Enemy enemy in enemies)
+            foreach( Enemy enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
                  enemy.light.color = Color.red;
                  enemy.actualState = state.CHASE;
@@ -108,12 +108,28 @@ public class Enemy : MonoBehaviour
                 speed = 5.0f;
             }
         }
-        else
+
+        else if (actualState == state.ALERT)
         {
             light.color = Color.yellow;
-            actualState = state.PATROL;
+            if(Vector3.Distance(transform.position, target.position) < 1.0f)
+            {
+                Destroy(target.gameObject);
+                actualState = state.PATROL;
+                target = auxTarget;
+                foreach (Enemy enemy in enemies)
+                {
+                   enemy.actualState = state.PATROL;
+                   enemy.target = enemy.auxTarget;                 
+                }
+            }
+        }
+        else
+        {
+            light.color = Color.blue;
             target = auxTarget;
             animator.SetFloat("Speed", 1f);
+            speed = 5.0f;
         }
     }
 
@@ -155,7 +171,6 @@ public class Enemy : MonoBehaviour
 
     private void FindVisibleTargets()
     {
-        visibleTargets.Clear();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
         for(int i=0; i < targetsInViewRadius.Length; i++)
@@ -168,14 +183,37 @@ public class Enemy : MonoBehaviour
 
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
-                    visibleTargets.Add(target);
+                    actualState = state.CHASE;//Si ve al personaje pasa a estado de persecucion
+                    return;
                 }
             }
+        }
+        if (actualState != state.ALERT)
+        {
+            actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
         }
     }
 
     private void Fire() //Disparo
     {
         Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
+    }
+
+    public void checkAlert(Transform position)//El personaje llama a esta funcion de los enemigos que iran a investigar la posicion desde la que se ha mandado la señal
+    {
+        if (actualState == state.ALERT)
+        {
+            Destroy(target.gameObject);
+        }
+        actualState = state.ALERT;
+        target = position;
+        foreach(Enemy enemy in enemies)
+        {
+            if(Vector3.Distance(transform.position, enemy.transform.position) < 10)
+            {
+                enemy.actualState = state.ALERT;
+                enemy.target = position;
+            }
+        }
     }
 }

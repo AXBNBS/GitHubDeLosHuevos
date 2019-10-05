@@ -17,6 +17,8 @@ public class NewPlayerMovement : MonoBehaviour
     private PlayerLife playerLife;
     private bool invulnerability = false; //Invulnerabilidad
 
+    public GameObject claim;
+    private GameObject auxTransform;
     // Start is called before the first frame update.
     private void Start ()
     {
@@ -63,6 +65,7 @@ public class NewPlayerMovement : MonoBehaviour
             {
                 animator.SetTrigger("Clap"); //Generas una palmada
                 //Que hace sonidos
+                CallEnemies();
             }
         }
 
@@ -122,6 +125,26 @@ public class NewPlayerMovement : MonoBehaviour
             invulnerability = true;
             StartCoroutine(InvulnerabilityWaitTime());
         }
+    }
+
+    private void CallEnemies()
+    {
+        Collider[] enemiesinArea = Physics.OverlapSphere(transform.position, 200);
+
+        for (int i = 0; i < enemiesinArea.Length; i++)
+        {
+            if (enemiesinArea[i].tag == "Enemy")
+            {
+                auxTransform = Instantiate(claim, transform.position, transform.rotation);
+                enemiesinArea[i].SendMessage("checkAlert", auxTransform.transform);
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 200);
     }
 
     IEnumerator InvulnerabilityWaitTime()
