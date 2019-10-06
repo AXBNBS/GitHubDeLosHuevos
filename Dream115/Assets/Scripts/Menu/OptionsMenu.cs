@@ -20,6 +20,7 @@ public class OptionsMenu : MonoBehaviour
     // Start is called before the first frame update.
     private void Start ()
     {
+        print (PlayerPrefs.GetInt ("resolutionW"));
         resolutions = Screen.resolutions;
 
         string option;
@@ -32,7 +33,7 @@ public class OptionsMenu : MonoBehaviour
         for (int i = 0; i < resolutions.Length; i += 1)
         {
             option = resolutions[i].width + "x" + resolutions[i].height;
-            if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
+            if (resolutions[i].width == PlayerPrefs.GetInt ("resolutionW") && resolutions[i].height == PlayerPrefs.GetInt ("resolutionH"))
             {
                 resolutionIndex = i;
             }
@@ -42,6 +43,7 @@ public class OptionsMenu : MonoBehaviour
         resolutionDrD.AddOptions (resolutionOptions);
 
         resolutionDrD.value = resolutionIndex;
+        fullscreenTgl.isOn = PlayerPrefs.GetString ("fullscreen") == "true";
 
         resolutionDrD.RefreshShownValue ();
     }
@@ -71,6 +73,8 @@ public class OptionsMenu : MonoBehaviour
         Resolution resolution = resolutions[resolutionDrD.value];
 
         Screen.SetResolution (resolution.width, resolution.height, Screen.fullScreen);
+        PlayerPrefs.SetInt ("resolutionW", resolution.width);
+        PlayerPrefs.SetInt ("resolutionH", resolution.height);
     }
 
 
@@ -78,7 +82,7 @@ public class OptionsMenu : MonoBehaviour
     public void SetFullscreen ()
     {
         Screen.fullScreen = fullscreenTgl.isOn;
-        //SetFullscreen (fullscreenTgl.value);
+        PlayerPrefs.SetString ("fullscreen", fullscreenTgl.isOn.ToString ());
     }
     
     
@@ -86,12 +90,15 @@ public class OptionsMenu : MonoBehaviour
     public void SetGraphics ()
     {
         QualitySettings.SetQualityLevel (graphicsDrD.value);
+        PlayerPrefs.SetInt ("graphics", graphicsDrD.value);
     }
 
 
     // Once the value on the volume slider is modified, the same will happen for the volume of the game.
-    public void SetVolume()
+    public void SetVolume ()
     {
         audioMixer.SetFloat ("volume", volumeSld.value);
+
+        PlayerPrefs.SetFloat ("volume", volumeSld.value);
     }
 }
