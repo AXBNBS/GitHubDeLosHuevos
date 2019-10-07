@@ -8,10 +8,11 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     public bool allowInput;
-    [SerializeField] private Transform target;
-    [SerializeField] private int speed, clampUp, clampDown, inputSensitivity;
+    [SerializeField] private Transform target, behind;
+    [SerializeField] private int movementSpd, centerSpd, clampUp, clampDown, inputSensitivity;
     private float mouseX, mouseY, rotX, rotY;
     private Quaternion localRotation;
+    private bool center;
 
     
     // Start is called before the first frame update.
@@ -22,10 +23,6 @@ public class CameraMovement : MonoBehaviour
         //Cursor.visible = false;
 
         allowInput = true;
-        speed = 120;
-        clampUp = +80;
-        clampDown = -30;
-        inputSensitivity = 150;
         rotX = this.transform.localRotation.eulerAngles.x;
         rotY = this.transform.localRotation.eulerAngles.y;
     }
@@ -38,23 +35,41 @@ public class CameraMovement : MonoBehaviour
         {
             mouseX = 0f;
             mouseY = 0f;
+            center = false;
         }
         else
         {
             mouseX = Input.GetAxis ("Mouse X");
             mouseY = Input.GetAxis ("Mouse Y");
+            if (Input.GetButtonDown ("CenterCamera") == true)
+            {
+                center = true;
+            }
         }
-        rotY += mouseX * inputSensitivity * Time.deltaTime;
-        rotX += mouseY * inputSensitivity * Time.deltaTime;
-        rotX = Mathf.Clamp (rotX, clampDown, clampUp);
-        localRotation = Quaternion.Euler (rotX, rotY, 0);
-        transform.rotation = localRotation;
+        if (center == true)
+        {
+            Vector3 difference = target.position - behind.position;
+
+            rotX = 0f;
+            rotY = Mathf.Atan2 (difference.x, difference.z) * Mathf.Rad2Deg;
+            localRotation = Quaternion.Euler (rotX, rotY, 0f);
+            this.transform.rotation = Quaternion.Lerp (this.transform.rotation, localRotation, centerSpd * Time.deltaTime);
+            center = false;
+        }
+        else
+        {
+            rotX += mouseY * inputSensitivity * Time.deltaTime;
+            rotX = Mathf.Clamp (rotX, clampDown, clampUp);
+            rotY += mouseX * inputSensitivity * Time.deltaTime;
+            localRotation = Quaternion.Euler (rotX, rotY, 0);
+            transform.rotation = localRotation;
+        }
     }
 
 
     // LateUpdate is called after all Update functions have been called.
     private void LateUpdate ()
     {
-        this.transform.position = Vector3.MoveTowards (this.transform.position, target.position, speed * Time.deltaTime);
+        this.transform.position = Vector3.MoveTowards (this.transform.position, target.position, movementSpd * Time.deltaTime);
     }
 }

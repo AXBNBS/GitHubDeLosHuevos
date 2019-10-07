@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -525,6 +525,36 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6554515646946445222}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1017713913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1017713914}
+  m_Layer: 8
+  m_Name: Behind
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1017713914
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017713913}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4, z: -6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6554515646946445223}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1033907568
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1150,6 +1180,12 @@ PrefabInstance:
       objectReference: {fileID: 504387306}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
+--- !u!4 &6554515646946445223 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6554515646694090810, guid: 6a1d3f989c152144e8d5a665c98543dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 6554515646946445222}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6647216854445869880
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1350,6 +1386,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraBase
       objectReference: {fileID: 0}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 800841157}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: behind
+      value: 
+      objectReference: {fileID: 1017713914}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: speed
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: clampUp
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: clampDown
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: inputSensitivity
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: movementSpd
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
+        type: 3}
+      propertyPath: centerSpd
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7162136802794126703, guid: c91a99aa38a6a50439d67e87cd7f7834,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1405,10 +1481,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
-        type: 3}
-      propertyPath: target
-      value: 
-      objectReference: {fileID: 800841157}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c91a99aa38a6a50439d67e87cd7f7834, type: 3}
