@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4496953, g: 0.49685287, b: 0.5599938, a: 1}
+  m_IndirectSpecularColor: {r: 0.44969493, g: 0.49685252, b: 0.5599933, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3415,6 +3415,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 219aaa65718956747a2e965914a1bef0,
     type: 3}
   m_PrefabInstance: {fileID: 874200002}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &909942516 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6775091113557614102, guid: d2538935c0049324198d432e2ff0318d,
+    type: 3}
+  m_PrefabInstance: {fileID: 6775091113693758587}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &926124469
 GameObject:
@@ -8065,6 +8071,10 @@ PrefabInstance:
       propertyPath: cameraRef
       value: 
       objectReference: {fileID: 260121104}
+    - target: {fileID: 670582061, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
+      propertyPath: canvas
+      value: 
+      objectReference: {fileID: 909942516}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
 --- !u!4 &6554515646946445223 stripped
@@ -8188,6 +8198,31 @@ PrefabInstance:
     - target: {fileID: 6775091113557614090, guid: d2538935c0049324198d432e2ff0318d,
         type: 3}
       propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3465705298484982334, guid: d2538935c0049324198d432e2ff0318d,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3465705298484982334, guid: d2538935c0049324198d432e2ff0318d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3465705298113492846, guid: d2538935c0049324198d432e2ff0318d,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3465705298113492846, guid: d2538935c0049324198d432e2ff0318d,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3465705298113492846, guid: d2538935c0049324198d432e2ff0318d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

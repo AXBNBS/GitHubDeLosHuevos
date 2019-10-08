@@ -16798,6 +16798,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7437aa4d9c8de9c48ac6394952fc4890, type: 3}
+--- !u!1 &983430860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6775091113557614102, guid: d2538935c0049324198d432e2ff0318d,
+    type: 3}
+  m_PrefabInstance: {fileID: 6775091113693758587}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &985111367
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40186,6 +40192,10 @@ PrefabInstance:
       propertyPath: cameraRef
       value: 
       objectReference: {fileID: 260121104}
+    - target: {fileID: 670582061, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
+      propertyPath: canvas
+      value: 
+      objectReference: {fileID: 983430860}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
 --- !u!4 &6554515646946445223 stripped
