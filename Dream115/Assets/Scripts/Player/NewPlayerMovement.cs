@@ -8,6 +8,7 @@ using UnityEngine;
 public class NewPlayerMovement : MonoBehaviour
 {
     public bool allowInput;
+
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;

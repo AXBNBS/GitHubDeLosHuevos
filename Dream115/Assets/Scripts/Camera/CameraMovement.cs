@@ -8,6 +8,7 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     public bool allowInput;
+
     [SerializeField] private Transform target, behind;
     [SerializeField] private int movementSpd, centerSpd, clampUp, clampDown, inputSensitivity;
     private float mouseX, mouseY, rotX, rotY;
