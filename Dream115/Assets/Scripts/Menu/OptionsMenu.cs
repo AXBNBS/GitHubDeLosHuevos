@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 
 
@@ -20,7 +21,6 @@ public class OptionsMenu : MonoBehaviour
     // Start is called before the first frame update.
     private void Start ()
     {
-        print (PlayerPrefs.GetInt ("resolutionW"));
         resolutions = Screen.resolutions;
 
         string option;
@@ -52,9 +52,16 @@ public class OptionsMenu : MonoBehaviour
     // Update is called once per frame.
     private void Update ()
     {
-        if (Input.GetKeyDown (KeyCode.Escape) == true || Input.GetKeyDown (KeyCode.Backspace) == true)
+        if (SceneManager.GetActiveScene().buildIndex == 0 && (Input.GetKeyDown (KeyCode.Escape) == true || Input.GetKeyDown (KeyCode.Backspace) == true))
         {
             BackToMain ();
+        }
+        else
+        {
+            if (Input.GetKeyDown (KeyCode.Backspace) == true)
+            {
+                BackToMain ();
+            }
         }
     }
 

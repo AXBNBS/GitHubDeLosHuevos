@@ -28,8 +28,6 @@ public class CameraMovement : MonoBehaviour
         rotX = this.transform.localRotation.eulerAngles.x;
         rotY = this.transform.localRotation.eulerAngles.y;
         camera = this.transform.GetChild (0);
-        print(behind.rotation.eulerAngles);
-        print(camera.rotation.eulerAngles);
     }
 
 

@@ -55,7 +55,6 @@ public class SaveLoadSettings : MonoBehaviour
             QualitySettings.SetQualityLevel (PlayerPrefs.GetInt ("graphics"));
             audioMixer.SetFloat ("volume", PlayerPrefs.GetFloat ("volume"));
 
-            print(PlayerPrefs.GetString("fullscreen"));
             if (PlayerPrefs.GetString("fullscreen").Equals ("False") == true)
             {
                 fullscreenTgl.isOn = false;
@@ -64,7 +63,6 @@ public class SaveLoadSettings : MonoBehaviour
             {
                 fullscreenTgl.isOn = true;
             }
-            print(PlayerPrefs.GetString("fullscreen"));
             graphicsDrD.value = PlayerPrefs.GetInt ("graphics");
             volumeSld.value = PlayerPrefs.GetFloat ("volume");
         }
