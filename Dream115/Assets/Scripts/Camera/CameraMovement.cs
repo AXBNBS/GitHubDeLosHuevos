@@ -13,6 +13,7 @@ public class CameraMovement : MonoBehaviour
     private float mouseX, mouseY, rotX, rotY;
     private Quaternion localRotation;
     private bool center;
+    private Transform camera;
 
     
     // Start is called before the first frame update.
@@ -25,6 +26,9 @@ public class CameraMovement : MonoBehaviour
         allowInput = true;
         rotX = this.transform.localRotation.eulerAngles.x;
         rotY = this.transform.localRotation.eulerAngles.y;
+        camera = this.transform.GetChild (0);
+        print(behind.rotation.eulerAngles);
+        print(camera.rotation.eulerAngles);
     }
 
 
@@ -54,7 +58,11 @@ public class CameraMovement : MonoBehaviour
             rotY = Mathf.Atan2 (difference.x, difference.z) * Mathf.Rad2Deg;
             localRotation = Quaternion.Euler (rotX, rotY, 0f);
             this.transform.rotation = Quaternion.Lerp (this.transform.rotation, localRotation, centerSpd * Time.deltaTime);
-            center = false;
+
+            if (camera.position.y - behind.position.y < 0.05f)
+            {
+                center = false;
+            }
         }
         else
         {

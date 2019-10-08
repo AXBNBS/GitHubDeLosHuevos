@@ -43,7 +43,7 @@ public class OptionsMenu : MonoBehaviour
         resolutionDrD.AddOptions (resolutionOptions);
 
         resolutionDrD.value = resolutionIndex;
-        fullscreenTgl.isOn = PlayerPrefs.GetString ("fullscreen") == "true";
+        fullscreenTgl.isOn = PlayerPrefs.GetString("fullscreen").Equals ("True") == true;
 
         resolutionDrD.RefreshShownValue ();
     }
@@ -98,7 +98,6 @@ public class OptionsMenu : MonoBehaviour
     public void SetVolume ()
     {
         audioMixer.SetFloat ("volume", volumeSld.value);
-
         PlayerPrefs.SetFloat ("volume", volumeSld.value);
     }
 }

@@ -1424,7 +1424,7 @@ PrefabInstance:
     - target: {fileID: 7162136802794126700, guid: c91a99aa38a6a50439d67e87cd7f7834,
         type: 3}
       propertyPath: centerSpd
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7162136802794126703, guid: c91a99aa38a6a50439d67e87cd7f7834,
         type: 3}
