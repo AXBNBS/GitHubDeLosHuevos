@@ -8,13 +8,18 @@ using UnityEngine;
 public class NewPlayerMovement : MonoBehaviour
 {
     public bool allowInput;
+
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;
     private CharacterController characterCtr;
     private Animator animator;
 
+    private PlayerLife playerLife;
+    private bool invulnerability = false; //Invulnerabilidad
 
+    public GameObject claim;
+    private GameObject auxTransform;
     // Start is called before the first frame update.
     private void Start ()
     {
@@ -26,6 +31,8 @@ public class NewPlayerMovement : MonoBehaviour
         movement = Vector3.zero;
         characterCtr = this.GetComponent<CharacterController> ();
         animator = this.GetComponentInChildren<Animator> ();
+
+        playerLife = this.GetComponent<PlayerLife>();
     }
 
     
@@ -54,7 +61,17 @@ public class NewPlayerMovement : MonoBehaviour
 
             characterCtr.Move (movement);
             animator.SetFloat ("Speed", 0f);
+
+            if (Input.GetKeyDown(KeyCode.F)) //Cuando estes quieto y aprietes F
+            {
+                animator.SetTrigger("Clap"); //Generas una palmada
+                //Que hace sonidos
+                CallEnemies();
+            }
         }
+
+        if (characterCtr.enabled == false) //Cuando mueres no puedes girar la camara
+            rotationSpd = 0;
     }
 
 
@@ -89,5 +106,51 @@ public class NewPlayerMovement : MonoBehaviour
         angle = Mathf.Atan2 (movement.x, movement.z) * Mathf.Rad2Deg;
         rotation = Quaternion.Euler (this.transform.rotation.x, angle, this.transform.rotation.z);
         this.transform.rotation = Quaternion.Lerp (this.transform.rotation, rotation, rotationSpd * Time.deltaTime);
+    }
+
+    void OnTriggerEnter(Collider collision)
+    {
+        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        {
+            playerLife.TakeDamage(40f);
+            invulnerability = true;
+            StartCoroutine(InvulnerabilityWaitTime());
+        }
+    }
+
+    private void OnTriggerStay(Collider collision)
+    {
+        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        {
+            playerLife.TakeDamage(40f);
+            invulnerability = true;
+            StartCoroutine(InvulnerabilityWaitTime());
+        }
+    }
+
+    private void CallEnemies()
+    {
+        Collider[] enemiesinArea = Physics.OverlapSphere(transform.position, 200);
+
+        for (int i = 0; i < enemiesinArea.Length; i++)
+        {
+            if (enemiesinArea[i].tag == "Enemy")
+            {
+                auxTransform = Instantiate(claim, transform.position, transform.rotation);
+                enemiesinArea[i].SendMessage("checkAlert", auxTransform.transform);
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 200);
+    }
+
+    IEnumerator InvulnerabilityWaitTime()
+    {
+        yield return new WaitForSeconds(2f);
+        invulnerability = false;
     }
 }

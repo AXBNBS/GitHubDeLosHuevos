@@ -8,17 +8,18 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] private GameObject options;
+
+
     // Start is called before the first frame update.
     private void Start ()
     {
-        
     }
 
 
     // Update is called once per frame.
     private void Update ()
     {
-        
     }
 
 
@@ -32,7 +33,8 @@ public class MainMenu : MonoBehaviour
     // The main menu will be hidden and the different available settings will be shown.
     public void Options ()
     {
-
+        options.SetActive (true);
+        this.gameObject.SetActive (false);
     }
 
 
