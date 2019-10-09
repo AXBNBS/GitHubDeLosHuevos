@@ -44,8 +44,11 @@ public class Enemy : MonoBehaviour
 
     float stoppingDistance = 3.0f;
 
+    private DetectObstacles[] eyes;
+
+
     // Start is called before the first frame update
-    void Start()
+    void Start ()
     {
         actualState = state.PATROL;
         transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
@@ -58,27 +61,41 @@ public class Enemy : MonoBehaviour
         auxTarget = target;
 
         animator = this.GetComponentInChildren<Animator>();
+        eyes = this.GetComponentsInChildren<DetectObstacles> ();
     }
 
-    // Update is called once per frame
-    void Update()
+
+    // Update is called once per frame.
+    private void Update ()
     {
-        FindVisibleTargets();
-        FollowRoute();
-        Move();
-
+        FindVisibleTargets ();
+        FollowRoute ();
+        Move ();
     }
 
-    private void Move()
+
+    private void Move ()
     {
         transform.Translate(new Vector3(0, 0, speed * Time.deltaTime));
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
 
-        var targetRotation = Quaternion.LookRotation(lookDirection);
+        var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
 
-        Quaternion targetRotationOnlyY = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.eulerAngles.y, transform.eulerAngles.z);
+        if (eyes[0].obstacleDetected == true)
+        {
+            targetRotation -= eyes[0].transform.localRotation.eulerAngles;
+            print("Obstacle on the right");
+        }
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        if (eyes[1].obstacleDetected == true)
+        {
+            targetRotation -= eyes[1].transform.localRotation.eulerAngles;
+            print("Obstacle on the left");
+        }
+
+        Quaternion targetRotationOnlyY = Quaternion.Euler (transform.rotation.eulerAngles.x, targetRotation.y, transform.rotation.eulerAngles.z);
+
+        transform.rotation = Quaternion.Slerp (transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
 
         if (actualState==state.CHASE)
         {

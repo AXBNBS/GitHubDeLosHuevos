@@ -136,7 +136,7 @@ public class NewPlayerMovement : MonoBehaviour
         {
             if (enemiesinArea[i].tag == "Enemy")
             {
-                auxTransform = Instantiate(claim, transform.position, transform.rotation);
+                auxTransform = Instantiate (claim, transform.position, transform.rotation);
                 enemiesinArea[i].SendMessage("checkAlert", auxTransform.transform);
             }
         }
