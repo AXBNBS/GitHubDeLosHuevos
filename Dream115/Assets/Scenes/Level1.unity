@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4496953, g: 0.49685287, b: 0.5599938, a: 1}
+  m_IndirectSpecularColor: {r: 0.44969475, g: 0.49685246, b: 0.5599934, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9660,6 +9660,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7df9e060a6668084184e38bde007a7fb, type: 3}
+--- !u!1 &562999505
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 980899451}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 562999506}
+  m_Layer: 0
+  m_Name: HealthBar (Missing Prefab)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &562999506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 980899451}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562999505}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &564587862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30125,6 +30155,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c91a99aa38a6a50439d67e87cd7f7834, type: 3}
+--- !u!1 &1620003848 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6554515646694090815, guid: 6a1d3f989c152144e8d5a665c98543dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 6554515646946445222}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1620003854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620003848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4198548aa1cc89488b0814404ea4775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInvisible: 0
 --- !u!1 &1623340436
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,16 +40,30 @@ public class PlayerInteraction : MonoBehaviour
         movementRef = this.GetComponent<NewPlayerMovement> ();
     }
 
+    public void hidePanelText()
+    {
+        shownText.text = "";
+        textEnd = true;
+        activeParagraph = 0;
+        cameraRef.allowInput = true;
+        movementRef.allowInput = true;
+
+        panel.SetActive(false);
+
+
+    } 
+
 
     // Update is called once per frame.
     private void Update ()
     {
-        if (Input.GetButtonDown ("Interact") == true && text != null)
+
+        if (text != null) //Input.GetButtonDown("Interact") == true && 
         {
             if (panel.activeSelf == false)
             {
-                cameraRef.allowInput = false;
-                movementRef.allowInput = false;
+                //cameraRef.allowInput = false;
+                //movementRef.allowInput = false;
                 //movementRef.transform.LookAt (this.transform);
 
                 panel.SetActive (true);
@@ -66,12 +80,7 @@ public class PlayerInteraction : MonoBehaviour
                     lettersRead = 0;
                     if (activeParagraph == text.Length)
                     {
-                        textEnd = true;
-                        activeParagraph = 0;
-                        cameraRef.allowInput = true;
-                        movementRef.allowInput = true;
-
-                        panel.SetActive (false);
+                        hidePanelText();
                     }
                 }
                 else
@@ -150,7 +159,7 @@ public class PlayerInteraction : MonoBehaviour
         float timeInvisible = 5.0f;
         int parpadeosAux = 0;
         int numeroParpadeos = 10;
-        //playerInvisible = true; //Para los enemigos
+        PlayerStats.Instance.playerInvisible = true; //Para los enemigos
 
         while (parpadeosAux < numeroParpadeos)
         {
@@ -161,7 +170,7 @@ public class PlayerInteraction : MonoBehaviour
             parpadeosAux++;
         }
 
-        //playerInvisible = false; //Para los enemigos
+        PlayerStats.Instance.playerInvisible = false; //Para los enemigos
 
         player3DModel.SetActive (true);
     }

@@ -11,6 +11,8 @@ public class ObjectText : MonoBehaviour
     private PlayerInteraction playerInt;
 
 
+    bool playerInsideCollider;
+
     // Start is called before the first frame update.
     private void Start ()
     {
@@ -21,15 +23,25 @@ public class ObjectText : MonoBehaviour
     // Update is called once per frame.
     private void Update ()
     {
+        if(playerInsideCollider && Input.GetButtonDown("Interact"))
+        {
+            PlayerStats.Instance.RegalosRecogidos++;
+            playerInsideCollider = false;
+            playerInt.hidePanelText();
+            playerInt.text = null;
+            Destroy(this.gameObject);
+        }
     }
 
 
     // If the player gets close to the interactable object, we'll send him/her the text that will appear if he/she decides to interact with the object.
     private void OnTriggerEnter (Collider other)
     {
+
         if (other.tag == "Player")
         {
             playerInt.text = this.text;
+            playerInsideCollider = true;
         }
     }
 
@@ -39,6 +51,8 @@ public class ObjectText : MonoBehaviour
     {
         if (other.tag == "Player")
         {
+            playerInsideCollider = false;
+            playerInt.hidePanelText();
             playerInt.text = null;
         }
     }

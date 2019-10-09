@@ -83,7 +83,7 @@ public class Enemy : MonoBehaviour
         if (actualState==state.CHASE)
         {
             light.color = Color.red;
-            actualState = state.CHASE;
+            actualState = state.CHASE; 
             target = player;
             foreach( Enemy enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
@@ -181,7 +181,7 @@ public class Enemy : MonoBehaviour
             {
                 float distToTarget = Vector3.Distance(transform.position, target.position);
 
-                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
+                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
                 {
                     actualState = state.CHASE;//Si ve al personaje pasa a estado de persecucion
                     return;
