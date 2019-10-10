@@ -28,8 +28,6 @@ public class Enemy : MonoBehaviour
 
     public Transform player;
 
-    public List<Transform> visibleTargets = new List<Transform>();
-
     int rayDistance = 10;
 
     public GameObject shot; //Objeto que se disparara
@@ -43,6 +41,9 @@ public class Enemy : MonoBehaviour
     public Enemy[] enemies; //Cada enemigo guarda toda la lista de enemigos para llamarles si ve al personaje
 
     float stoppingDistance = 3.0f;
+
+    // LLEVAR COSES D'ACÍ AL FINAL
+    public bool backToRoute;
 
     [SerializeField] private int distance, angle;
     [SerializeField] private Transform[] raycastOrigins;
@@ -81,6 +82,7 @@ public class Enemy : MonoBehaviour
         }
         rightObstacle = false;
         leftObstacle = false;
+        backToRoute = false;
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 1;
     }
 
@@ -96,24 +98,25 @@ public class Enemy : MonoBehaviour
 
     private void Move ()
     {
-        transform.Translate(new Vector3(0, 0, speed * Time.deltaTime));
+        transform.Translate (new Vector3 (0, 0, speed * Time.deltaTime));
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
 
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
 
-        if (Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
+        if (actualState != state.PATROL || backToRoute == true)
         {
-            targetRotation.y -= angle;
-            //rightObstacle = true;
-            print("Obstacle on the right");
-        }
-        else
-        {
+            if (Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
+            {
+                targetRotation.y -= angle;
+                //rightObstacle = true;
+                print("Right");
+            }
+
             if (Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
             {
                 targetRotation.y += angle;
                 //leftObstacle = true;
-                print("Obstacle on the left");
+                print("Left");
             }
         }
 
@@ -157,11 +160,16 @@ public class Enemy : MonoBehaviour
             {
                 Destroy(target.gameObject);
                 actualState = state.PATROL;
+                backToRoute = true;
                 target = auxTarget;
                 foreach (Enemy enemy in enemies)
                 {
-                    enemy.actualState = state.PATROL;
-                    enemy.target = enemy.auxTarget;
+                    if (enemy.actualState != state.PATROL)
+                    {
+                        enemy.actualState = state.PATROL;
+                        enemy.backToRoute = true;
+                        enemy.target = enemy.auxTarget;
+                    }
                 }
             }
         }
@@ -175,12 +183,13 @@ public class Enemy : MonoBehaviour
     }
 
 
-    private void FollowRoute()
+    private void FollowRoute ()
     {
         if (this.actualState == state.PATROL)
         {
-            if (Vector3.Distance(this.transform.position, target.transform.position) <= 1)
+            if (Vector3.Distance (this.transform.position, target.transform.position) <= 1)
             {
+                backToRoute = false;
                 target = target.gameObject.GetComponent<Waypoint>().nextPoint;
                 auxTarget = target;
             }
@@ -197,7 +206,7 @@ public class Enemy : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected ()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
@@ -210,8 +219,8 @@ public class Enemy : MonoBehaviour
 
         Gizmos.color = Color.yellow;
 
-        Gizmos.DrawRay(raycastOrigins[0].position, raycastOrigins[0].forward * distance);
-        Gizmos.DrawRay(raycastOrigins[1].position, raycastOrigins[1].forward * distance);
+        Gizmos.DrawRay (raycastOrigins[0].position, (raycastOrigins[0].forward + raycastOrigins[0].right).normalized * distance);
+        Gizmos.DrawRay (raycastOrigins[1].position, (raycastOrigins[1].forward - raycastOrigins[1].right).normalized * distance);
         //Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].right * distance / 3);
         //Gizmos.DrawRay (raycastOrigins[1].position, -raycastOrigins[1].right * distance / 3);
 
@@ -219,7 +228,8 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, viewRadiusShoot); //Dibujo de distancia de disparo
     }
 
-    private void FindVisibleTargets()
+
+    private void FindVisibleTargets ()
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
@@ -233,7 +243,7 @@ public class Enemy : MonoBehaviour
 
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
                 {
-                    actualState = state.CHASE;//Si ve al personaje pasa a estado de persecucion
+                    actualState = state.CHASE; //Si ve al personaje pasa a estado de persecucion
                     return;
                 }
             }
@@ -241,15 +251,17 @@ public class Enemy : MonoBehaviour
         if (actualState != state.ALERT)
         {
             actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
+            //backToRoute = true;
         }
     }
 
-    private void Fire() //Disparo
+
+    private void Fire () //Disparo
     {
         Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
     }
 
-    public void checkAlert(Transform position)//El personaje llama a esta funcion de los enemigos que iran a investigar la posicion desde la que se ha mandado la señal
+    public void checkAlert (Transform position)//El personaje llama a esta funcion de los enemigos que iran a investigar la posicion desde la que se ha mandado la señal
     {
         if (actualState == state.ALERT)
         {
