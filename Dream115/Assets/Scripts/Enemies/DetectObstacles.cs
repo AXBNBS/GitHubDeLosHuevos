@@ -33,7 +33,7 @@ public class DetectObstacles : MonoBehaviour
     private void OnDrawGizmos ()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine (parentCenter.position, this.transform.position);
+        Gizmos.DrawRay (parentCenter.position, this.transform.position - parentCenter.position);
     }
 
 

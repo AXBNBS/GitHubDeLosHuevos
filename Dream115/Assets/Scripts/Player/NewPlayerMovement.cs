@@ -62,7 +62,7 @@ public class NewPlayerMovement : MonoBehaviour
             characterCtr.Move (movement);
             animator.SetFloat ("Speed", 0f);
 
-            if (Input.GetKeyDown(KeyCode.F)) //Cuando estes quieto y aprietes F
+            if (Input.GetKeyDown(KeyCode.T)) //Cuando estes quieto y aprietes F
             {
                 animator.SetTrigger("Clap"); //Generas una palmada
                 //Que hace sonidos

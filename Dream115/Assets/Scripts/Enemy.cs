@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     public Transform target;
     Transform auxTarget;
 
-    enum state { PATROL, ALERT, CHASE}; // Control de estados para cuando persiga al personaje
+    enum state { PATROL, ALERT, CHASE }; // Control de estados para cuando persiga al personaje
 
     state actualState;
 
@@ -44,12 +44,17 @@ public class Enemy : MonoBehaviour
 
     float stoppingDistance = 3.0f;
 
-    private DetectObstacles[] eyes;
+    [SerializeField] private int distance, angle;
+    [SerializeField] private Transform[] raycastOrigins;
+    private RaycastHit hitInfoOld, hitInfoNew;
+    private bool rightObstacle, leftObstacle, xAxis, positiveSign;
+    private float limit, colliderLimit;
 
 
     // Start is called before the first frame update
     void Start ()
     {
+        //this.transform.position = target.position;
         actualState = state.PATROL;
         transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
 
@@ -61,16 +66,31 @@ public class Enemy : MonoBehaviour
         auxTarget = target;
 
         animator = this.GetComponentInChildren<Animator>();
-        eyes = this.GetComponentsInChildren<DetectObstacles> ();
+        raycastOrigins = new Transform[2];
+
+        Transform children = this.GetComponentInChildren<Transform>();
+        int index = 0;
+
+        foreach (Transform t in children)
+        {
+            if (t.tag == "RaycastOrigin")
+            {
+                raycastOrigins[index] = t;
+                index += 1;
+            }
+        }
+        rightObstacle = false;
+        leftObstacle = false;
+        colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 1;
     }
 
 
     // Update is called once per frame.
-    private void Update ()
+    private void Update()
     {
-        FindVisibleTargets ();
-        FollowRoute ();
-        Move ();
+        FindVisibleTargets();
+        FollowRoute();
+        Move();
     }
 
 
@@ -81,32 +101,36 @@ public class Enemy : MonoBehaviour
 
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
 
-        if (eyes[0].obstacleDetected == true)
+        if (Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
         {
-            targetRotation -= eyes[0].transform.localRotation.eulerAngles;
+            targetRotation.y -= angle;
+            //rightObstacle = true;
             print("Obstacle on the right");
         }
-
-        if (eyes[1].obstacleDetected == true)
+        else
         {
-            targetRotation -= eyes[1].transform.localRotation.eulerAngles;
-            print("Obstacle on the left");
+            if (Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
+            {
+                targetRotation.y += angle;
+                //leftObstacle = true;
+                print("Obstacle on the left");
+            }
         }
 
-        Quaternion targetRotationOnlyY = Quaternion.Euler (transform.rotation.eulerAngles.x, targetRotation.y, transform.rotation.eulerAngles.z);
+        Quaternion targetRotationOnlyY = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.y, transform.rotation.eulerAngles.z);
 
-        transform.rotation = Quaternion.Slerp (transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
 
-        if (actualState==state.CHASE)
+        if (actualState == state.CHASE)
         {
             light.color = Color.red;
-            actualState = state.CHASE; 
+            actualState = state.CHASE;
             target = player;
-            foreach( Enemy enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
+            foreach (Enemy enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
-                 enemy.light.color = Color.red;
-                 enemy.actualState = state.CHASE;
-                 enemy.target = player;
+                enemy.light.color = Color.red;
+                enemy.actualState = state.CHASE;
+                enemy.target = player;
             }
             if (shooterEnemy && Vector3.Distance(transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
@@ -129,15 +153,15 @@ public class Enemy : MonoBehaviour
         else if (actualState == state.ALERT)
         {
             light.color = Color.yellow;
-            if(Vector3.Distance(transform.position, target.position) < 1.0f)
+            if (Vector3.Distance(transform.position, target.position) < 1.0f)
             {
                 Destroy(target.gameObject);
                 actualState = state.PATROL;
                 target = auxTarget;
                 foreach (Enemy enemy in enemies)
                 {
-                   enemy.actualState = state.PATROL;
-                   enemy.target = enemy.auxTarget;                 
+                    enemy.actualState = state.PATROL;
+                    enemy.target = enemy.auxTarget;
                 }
             }
         }
@@ -150,17 +174,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     private void FollowRoute()
     {
         if (this.actualState == state.PATROL)
         {
-            if (Vector3.Distance(this.transform.position,target.transform.position)<=1.0)
+            if (Vector3.Distance(this.transform.position, target.transform.position) <= 1)
             {
                 target = target.gameObject.GetComponent<Waypoint>().nextPoint;
                 auxTarget = target;
             }
         }
     }
+
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
     {
@@ -171,7 +197,7 @@ public class Enemy : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
@@ -182,6 +208,13 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
         Gizmos.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
 
+        Gizmos.color = Color.yellow;
+
+        Gizmos.DrawRay(raycastOrigins[0].position, raycastOrigins[0].forward * distance);
+        Gizmos.DrawRay(raycastOrigins[1].position, raycastOrigins[1].forward * distance);
+        //Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].right * distance / 3);
+        //Gizmos.DrawRay (raycastOrigins[1].position, -raycastOrigins[1].right * distance / 3);
+
         Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
         Gizmos.DrawWireSphere(transform.position, viewRadiusShoot); //Dibujo de distancia de disparo
     }
@@ -190,7 +223,7 @@ public class Enemy : MonoBehaviour
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
-        for(int i=0; i < targetsInViewRadius.Length; i++)
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
             Transform target = targetsInViewRadius[i].transform;
             Vector3 dirToTarget = (target.position - transform.position).normalized;
@@ -224,9 +257,9 @@ public class Enemy : MonoBehaviour
         }
         actualState = state.ALERT;
         target = position;
-        foreach(Enemy enemy in enemies)
+        foreach (Enemy enemy in enemies)
         {
-            if(Vector3.Distance(transform.position, enemy.transform.position) < 10)
+            if (Vector3.Distance(transform.position, enemy.transform.position) < 10)
             {
                 enemy.actualState = state.ALERT;
                 enemy.target = position;
@@ -234,3 +267,106 @@ public class Enemy : MonoBehaviour
         }
     }
 }
+
+
+    /* Checks the obstacle just hit by the raycast in order to determine the point where there will be no wall next to the character.
+    private void DefineLimits ()
+    {
+        if (xAxis == true)
+        {
+            Vector3 positiveLimit = hitInfoNew.transform.position + new Vector3 (hitInfoNew.collider.bounds.extents.x, 0, 0);
+            Vector3 negativeLimit = hitInfoNew.transform.position - new Vector3 (hitInfoNew.collider.bounds.extents.x, 0, 0);
+
+            if (Vector3.Angle (this.transform.forward, positiveLimit - this.transform.position) <
+                Vector3.Angle (this.transform.forward, negativeLimit - this.transform.position))
+            {
+                limit = positiveLimit.x;
+            }
+            else
+            {
+                limit = negativeLimit.x;
+            }
+        }
+        else
+        {
+            Vector3 positiveLimit = hitInfoNew.transform.position + new Vector3 (0, 0, hitInfoNew.collider.bounds.extents.z);
+            Vector3 negativeLimit = hitInfoNew.transform.position - new Vector3 (0, 0, hitInfoNew.collider.bounds.extents.z);
+
+            if (Vector3.Angle (this.transform.forward, positiveLimit - this.transform.position) <
+                Vector3.Angle (this.transform.forward, negativeLimit - this.transform.position))
+            {
+                limit = positiveLimit.z;
+            }
+            else
+            {
+                limit = negativeLimit.z;
+            }
+        }
+        hitInfoOld = hitInfoNew;
+    }
+
+
+            if (rightObstacle == true ||
+            Physics.Raycast(raycastOrigins[0].position, raycastOrigins[0].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
+        {
+            targetRotation.y -= angle;
+            rightObstacle = true;
+            print("Obstacle on the right");
+
+    /*if (hitInfoNew.transform != hitInfoOld.transform)
+    {
+        xAxis = hitInfoNew.collider.bounds.extents.x > hitInfoNew.collider.bounds.extents.z;
+
+        DefineLimits ();
+    }
+
+    if (xAxis == true)
+    {
+        if (Mathf.Sign (limit) == -1 && (this.transform.position.x + colliderLimit) < limit || 
+            Mathf.Sign (limit) == +1 && (this.transform.position.x - colliderLimit) > limit)
+        {
+            rightObstacle = false;
+        }
+    }
+    else
+    {
+        if (Mathf.Sign (limit) == -1 && (this.transform.position.z + colliderLimit) < limit ||
+            Mathf.Sign (limit) == +1 && (this.transform.position.z - colliderLimit) > limit)
+        {
+            rightObstacle = false;
+        }
+    }*/
+        /*else
+        {
+            if (leftObstacle == true ||
+                Physics.Raycast(raycastOrigins[1].position, raycastOrigins[1].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
+            {
+                targetRotation.y += angle;
+                leftObstacle = true;
+                print("Obstacle on the left");
+
+                /*if (hitInfoNew.transform != hitInfoOld.transform)
+                {
+                    xAxis = hitInfoNew.collider.bounds.extents.x > hitInfoNew.collider.bounds.extents.z;
+
+                    DefineLimits ();
+                }
+
+                if (xAxis == true)
+                {
+                    if (Mathf.Sign (limit) == -1 && (this.transform.position.x + colliderLimit) < limit ||
+                        Mathf.Sign (limit) == +1 && (this.transform.position.x - colliderLimit) > limit)
+                    {
+                        leftObstacle = false;
+                    }
+                }
+                else
+                {
+                    if (Mathf.Sign (limit) == -1 && (this.transform.position.z + colliderLimit) < limit ||
+                        Mathf.Sign (limit) == +1 && (this.transform.position.z - colliderLimit) > limit)
+                    {
+                        leftObstacle = false;
+                    }
+                }
+            }
+        }*/
