@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Turret : MonoBehaviour
+{
+
+    enum state { PATROL, DETECTED };
+
+    state actualState;
+
+    float turnSpeed = 2.0f;
+
+    public Transform target;
+    Transform auxTarget;
+
+    float viewRadius;
+    float viewAngle;
+
+    public LayerMask targetMask;
+    public LayerMask obstacleMask;
+    public LayerMask rotationPoint;
+
+    public Light light;
+
+    public Transform player;
+
+    public bool shooterEnemy; //Variable que indicará si la torreta solo vigila o dispara
+
+    public Enemy[] enemies; //Cada enemigo guarda toda la lista de enemigos para llamarles si ve al personaje
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        actualState = state.PATROL;
+        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+
+        viewRadius = 30f;
+        viewAngle = 50f;
+
+        light = light.GetComponent<Light>();
+        auxTarget = target;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        FindVisibleTargets();
+        Move();
+    }
+
+    private void FindVisibleTargets()
+    {
+        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
+        {
+            Transform target = targetsInViewRadius[i].transform;
+            Vector3 dirToTarget = (target.position - transform.position).normalized;
+            if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
+            {
+                float distToTarget = Vector3.Distance(transform.position, target.position);
+
+                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
+                {
+                    actualState = state.DETECTED;//Si ve al personaje pasa a estado de persecucion
+                    return;
+                }
+            }
+        }
+    }
+
+    private void Move()
+    {
+        Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+
+        var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+
+        Quaternion targetRotationOnlyY = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.y, transform.rotation.eulerAngles.z);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
+
+        float distToTarget = Vector3.Distance(transform.position, target.position);
+        if (Physics.Raycast(transform.position, transform.forward, distToTarget, rotationPoint))
+        {
+            target = target.gameObject.GetComponent<Waypoint>().nextPoint;
+            auxTarget = target;
+        }
+
+        if (actualState == state.PATROL)
+        {
+            light.color = Color.blue;
+            target = auxTarget;
+        }
+    }
+
+    public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
+    {
+        if (!angleIsGlobal)
+        {
+            angleInDegrees += transform.eulerAngles.y;
+        }
+        return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, viewRadius);
+
+        Vector3 viewAngleA = DirFromAngle(-viewAngle / 2, false);
+        Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
+
+        Gizmos.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
+        Gizmos.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
+
+        Gizmos.DrawRay(transform.position, transform.forward * 100);
+    }
+}
