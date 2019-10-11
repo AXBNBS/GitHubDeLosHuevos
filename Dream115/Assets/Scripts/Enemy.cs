@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     float viewRadiusShoot; //Distancia donde dispararía el enemigo
 
     public bool shooterEnemy; //Variable que indicará si el enemigo es de lejos o de cerca
+    public bool beltranoide; //Variable que indica si el enemigo es un beltranoide o no
 
     public LayerMask targetMask;
     public LayerMask obstacleMask;
@@ -277,6 +278,7 @@ public class Enemy : MonoBehaviour
             }
             if (shooterEnemy && Vector3.Distance (transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
+                animator.SetTrigger("Shoot");
                 nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
                 Fire(); //Dispara
             }
@@ -290,6 +292,8 @@ public class Enemy : MonoBehaviour
             {
                 animator.SetFloat("Speed", 12f);//Sigue persiguiendo al personaje
                 normalMoveSpd = 5.0f;
+                if (beltranoide) //Si es un beltranoide
+                    normalMoveSpd *= 2.5f; //Te persigue a mayor velocidad
             }
         }
 
