@@ -20,6 +20,8 @@ public class NewPlayerMovement : MonoBehaviour
 
     public GameObject claim;
     private GameObject auxTransform;
+
+
     // Start is called before the first frame update.
     private void Start ()
     {
@@ -75,6 +77,36 @@ public class NewPlayerMovement : MonoBehaviour
     }
 
 
+    private void OnTriggerEnter (Collider collision)
+    {
+        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        {
+            playerLife.TakeDamage (40f);
+            invulnerability = true;
+
+            StartCoroutine (InvulnerabilityWaitTime ());
+        }
+    }
+
+
+    private void OnTriggerStay (Collider collision)
+    {
+        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        {
+            playerLife.TakeDamage (40f);
+            invulnerability = true;
+            StartCoroutine (InvulnerabilityWaitTime ());
+        }
+    }
+
+
+    private void OnDrawGizmos ()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere (transform.position, 200);
+    }
+
+
     // Whenever the player presses the movement keys, the character will move in the specified direction, change his animation accordingly and quickly rotate in order to face the direction he's walking to.
     private void Move (float h, float v)
     {
@@ -108,27 +140,8 @@ public class NewPlayerMovement : MonoBehaviour
         this.transform.rotation = Quaternion.Lerp (this.transform.rotation, rotation, rotationSpd * Time.deltaTime);
     }
 
-    void OnTriggerEnter(Collider collision)
-    {
-        if (invulnerability == false && collision.gameObject.tag == "Enemy")
-        {
-            playerLife.TakeDamage(40f);
-            invulnerability = true;
-            StartCoroutine(InvulnerabilityWaitTime());
-        }
-    }
 
-    private void OnTriggerStay(Collider collision)
-    {
-        if (invulnerability == false && collision.gameObject.tag == "Enemy")
-        {
-            playerLife.TakeDamage(40f);
-            invulnerability = true;
-            StartCoroutine(InvulnerabilityWaitTime());
-        }
-    }
-
-    private void CallEnemies()
+    private void CallEnemies ()
     {
         Collider[] enemiesinArea = Physics.OverlapSphere(transform.position, 200);
 
@@ -142,11 +155,6 @@ public class NewPlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, 200);
-    }
 
     IEnumerator InvulnerabilityWaitTime()
     {

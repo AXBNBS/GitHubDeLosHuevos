@@ -1,13 +1,15 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Enemy : MonoBehaviour
 {
 
-    public float speed = 5.0f;
-    float turnSpeed = 4.0f;
+    public float normalMoveSpd, slowMoveSpd, normalTurnSpd, fastTurnSpd;
     public Transform target;
     Transform auxTarget;
 
@@ -42,14 +44,14 @@ public class Enemy : MonoBehaviour
 
     float stoppingDistance = 3.0f;
 
-    // LLEVAR COSES D'ACÍ AL FINAL
-    public bool backToRoute;
+    public bool backToPatrol;
 
-    [SerializeField] private int distance, angle;
+    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle;
     [SerializeField] private Transform[] raycastOrigins;
-    private RaycastHit hitInfoOld, hitInfoNew;
-    private bool rightObstacle, leftObstacle, xAxis, positiveSign;
-    private float limit, colliderLimit;
+    private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle;
+    private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
+    private float colliderLimit;
+    private int deviation;
 
 
     // Start is called before the first frame update
@@ -80,49 +82,187 @@ public class Enemy : MonoBehaviour
                 index += 1;
             }
         }
-        rightObstacle = false;
-        leftObstacle = false;
-        backToRoute = false;
-        colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 1;
+        backToPatrol = true;
+        sideObsR = false;
+        sideObsL = false;
+        frontObsR = false;
+        frontObsL = false;
+        closeObstacle = false;
+        colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 2;
+        deviation = 0;
     }
 
 
     // Update is called once per frame.
-    private void Update()
+    private void Update ()
     {
-        FindVisibleTargets();
-        FollowRoute();
-        Move();
+        FindVisibleTargets ();
+        FollowRoute ();
+        Move ();
+    }
+
+
+    private void OnDrawGizmosSelected ()
+    {
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere (transform.position, viewRadius);
+
+        Vector3 viewAngleA = DirFromAngle (-viewAngle / 2, false);
+        Vector3 viewAngleB = DirFromAngle (+viewAngle / 2, false);
+
+        Gizmos.DrawLine (transform.position, transform.position + viewAngleA * viewRadius);
+        Gizmos.DrawLine (transform.position, transform.position + viewAngleB * viewRadius);
+
+        // Rays that represent the raycasts launched from the enemy's shoulders onwards.
+        Gizmos.color = Color.yellow;
+
+        Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].forward * frontRaysDst);
+        Gizmos.DrawRay (raycastOrigins[1].position, raycastOrigins[1].forward * frontRaysDst);
+        Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].right * sideRaysDst);
+        Gizmos.DrawRay (raycastOrigins[1].position, -raycastOrigins[1].right * sideRaysDst);
+
+        // Lines drawn to represent the linecasts launched from the enemy's shoulders to its current target.
+        Gizmos.color = Color.black;
+
+        Gizmos.DrawLine (raycastOrigins[0].position, target.position);
+        Gizmos.DrawLine (raycastOrigins[1].position, target.position);
+
+        Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
+
+        Gizmos.DrawWireSphere (transform.position, viewRadiusShoot); //Dibujo de distancia de disparo
     }
 
 
     private void Move ()
     {
-        transform.Translate (new Vector3 (0, 0, speed * Time.deltaTime));
+        // The enemy's speed will be drastically reduced if it's close to an obstacle.
+        if (closeObstacle == false)
+        {
+            transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
+        }
+        else
+        {
+            transform.Translate (new Vector3 (0, 0, slowMoveSpd * Time.deltaTime));
+        }
+        
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
-
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
 
-        if (actualState != state.PATROL || backToRoute == true)
+        if (actualState != state.PATROL || backToPatrol == true)
         {
-            if (Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
-            {
-                targetRotation.y -= angle;
-                //rightObstacle = true;
-                print("Right");
-            }
+            LookForObstacles ();
 
-            if (Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
+            if (frontObsL == true && frontObsR == true && sideObsL == true && sideObsR == true)
             {
-                targetRotation.y += angle;
-                //leftObstacle = true;
-                print("Left");
+                // If the enemy is not able to see a clear path ahead or at its sides, it will go back.
+                targetRotation.y += 180;
+                //print ("Unable to see a clear path, going back.");
+            }
+            else
+            {
+                if (frontObsR == true && frontObsL == true)
+                {
+                    if (frontObsRInfo.transform != frontObsLInfo.transform)
+                    {
+                        if (frontObsRInfo.distance > frontObsLInfo.distance)
+                        {
+                            // We prioritize dodging the obstacle on the left since that's the closest one.
+                            ChangeDeviation (true);
+                            //print("Dodging front left obstacle.");
+                        }
+                        else
+                        {
+                            // We prioritize dodging the obstacle on the right since that's the closest one.
+                            ChangeDeviation (false);
+                            //print("Dodging front right obstacle.");
+                        }
+                    }
+                    else
+                    {
+                        if (sideObsL == sideObsR)
+                        {
+                            if (Vector3.Angle (this.transform.right, frontObsRInfo.normal) < Vector3.Angle (-this.transform.right, frontObsRInfo.normal))
+                            {
+                                // The enemy turns right since that's the better option taking its current rotation into account.
+                                ChangeDeviation (true);
+                                //print("Dodging front obstacle by turning right.");
+                            }
+                            else
+                            {
+                                // The enemy turns left since that's the better option taking its current rotation into account.
+                                ChangeDeviation (false);
+                                //print("Dodging front obstacle by turning left.");
+                            }
+                        }
+                        else
+                        {
+                            if (sideObsR == true)
+                            {
+                                // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
+                                ChangeDeviation (false);
+                                //print("Moving left to avoid the other obstacles.");
+                            }
+                            else
+                            {
+                                // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
+                                ChangeDeviation (true);
+                                //print("Moving right to avoid the other obstacles.");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (frontObsR == true || frontObsL == true)
+                    {
+                        if (frontObsL == true)
+                        {
+                            // The enemy avoids hitting the corner in front of it by turning right.
+                            ChangeDeviation (true);
+                            //print("Avoiding corner by turning right.");
+                        }
+                        else
+                        {
+                            // The enemy avoids hitting the corner in front of it by turning left.
+                            ChangeDeviation (false);
+                            //print("Avoiding corner by turning left.");
+                        }
+                    }
+                    else
+                    {
+                        deviation = 0;
+                        if (sideObsR == true || sideObsL == true)
+                        {
+                            if (sideObsL == true)
+                            {
+                                // The enemy moves parallel to the wall on its left.
+                                targetRotation.y = +Vector3.Angle (new Vector3 (sideObsLInfo.normal.z, sideObsLInfo.normal.y, sideObsLInfo.normal.x), this.transform.forward);
+                                //print("Moving parallel to the left wall.");
+                            }
+                            else
+                            {
+                                // The enemy moves parallel to the wall on its right.
+                                targetRotation.y = -Vector3.Angle (new Vector3 (sideObsRInfo.normal.z, sideObsRInfo.normal.y, sideObsRInfo.normal.x), this.transform.forward);
+                                //print("Moving parallel to the right wall.");
+                            }
+                        }
+                    }
+                }
             }
         }
+      
+        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y + deviation, this.transform.rotation.eulerAngles.z);
 
-        Quaternion targetRotationOnlyY = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.y, transform.rotation.eulerAngles.z);
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
+        // The enemy will rotate fastes if it's close to an obstacle, in order to avoid clipping throught it.
+        if (closeObstacle == true)
+        {
+            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, fastTurnSpd * Time.deltaTime);
+        }
+        else
+        {
+            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
+        }
 
         if (actualState == state.CHASE)
         {
@@ -135,7 +275,7 @@ public class Enemy : MonoBehaviour
                 enemy.actualState = state.CHASE;
                 enemy.target = player;
             }
-            if (shooterEnemy && Vector3.Distance(transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
+            if (shooterEnemy && Vector3.Distance (transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
                 nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
                 Fire(); //Dispara
@@ -144,30 +284,32 @@ public class Enemy : MonoBehaviour
             if (Vector3.Distance(transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
             {
                 animator.SetFloat("Speed", 0f);//Para de andar
-                speed = 0;//
+                normalMoveSpd = 0;//
             }
             else
             {
                 animator.SetFloat("Speed", 12f);//Sigue persiguiendo al personaje
-                speed = 5.0f;
+                normalMoveSpd = 5.0f;
             }
         }
 
         else if (actualState == state.ALERT)
         {
             light.color = Color.yellow;
-            if (Vector3.Distance(transform.position, target.position) < 1.0f)
+
+            if (Vector3.Distance (transform.position, target.position) < colliderLimit)
             {
-                Destroy(target.gameObject);
+                Destroy (target.gameObject);
+
                 actualState = state.PATROL;
-                backToRoute = true;
+                backToPatrol = true;
                 target = auxTarget;
                 foreach (Enemy enemy in enemies)
                 {
                     if (enemy.actualState != state.PATROL)
                     {
                         enemy.actualState = state.PATROL;
-                        enemy.backToRoute = true;
+                        enemy.backToPatrol = true;
                         enemy.target = enemy.auxTarget;
                     }
                 }
@@ -178,7 +320,7 @@ public class Enemy : MonoBehaviour
             light.color = Color.blue;
             target = auxTarget;
             animator.SetFloat("Speed", 1f);
-            speed = 5.0f;
+            normalMoveSpd = 5.0f;
         }
     }
 
@@ -189,7 +331,7 @@ public class Enemy : MonoBehaviour
         {
             if (Vector3.Distance (this.transform.position, target.transform.position) <= 1)
             {
-                backToRoute = false;
+                backToPatrol = false;
                 target = target.gameObject.GetComponent<Waypoint>().nextPoint;
                 auxTarget = target;
             }
@@ -197,35 +339,13 @@ public class Enemy : MonoBehaviour
     }
 
 
-    public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
+    public Vector3 DirFromAngle (float angleInDegrees, bool angleIsGlobal)
     {
         if (!angleIsGlobal)
         {
             angleInDegrees += transform.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
-    }
-
-    private void OnDrawGizmosSelected ()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, viewRadius);
-
-        Vector3 viewAngleA = DirFromAngle(-viewAngle / 2, false);
-        Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
-
-        Gizmos.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
-        Gizmos.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
-
-        Gizmos.color = Color.yellow;
-
-        Gizmos.DrawRay (raycastOrigins[0].position, (raycastOrigins[0].forward + raycastOrigins[0].right).normalized * distance);
-        Gizmos.DrawRay (raycastOrigins[1].position, (raycastOrigins[1].forward - raycastOrigins[1].right).normalized * distance);
-        //Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].right * distance / 3);
-        //Gizmos.DrawRay (raycastOrigins[1].position, -raycastOrigins[1].right * distance / 3);
-
-        Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
-        Gizmos.DrawWireSphere(transform.position, viewRadiusShoot); //Dibujo de distancia de disparo
     }
 
 
@@ -239,19 +359,19 @@ public class Enemy : MonoBehaviour
             Vector3 dirToTarget = (target.position - transform.position).normalized;
             if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
             {
-                float distToTarget = Vector3.Distance(transform.position, target.position);
+                float distToTarget = Vector3.Distance (transform.position, target.position);
 
-                if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
+                if (!Physics.Raycast (transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
                 {
                     actualState = state.CHASE; //Si ve al personaje pasa a estado de persecucion
                     return;
                 }
             }
         }
-        if (actualState != state.ALERT)
+        if (actualState == state.CHASE)
         {
             actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
-            //backToRoute = true;
+            backToPatrol = true;
         }
     }
 
@@ -261,124 +381,71 @@ public class Enemy : MonoBehaviour
         Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
     }
 
+
     public void checkAlert (Transform position)//El personaje llama a esta funcion de los enemigos que iran a investigar la posicion desde la que se ha mandado la señal
     {
         if (actualState == state.ALERT)
         {
-            Destroy(target.gameObject);
+            Destroy (target.gameObject);
         }
+
         actualState = state.ALERT;
         target = position;
         foreach (Enemy enemy in enemies)
         {
-            if (Vector3.Distance(transform.position, enemy.transform.position) < 10)
+            if (Vector3.Distance (transform.position, enemy.transform.position) < 10)
             {
                 enemy.actualState = state.ALERT;
                 enemy.target = position;
             }
         }
     }
-}
 
 
-    /* Checks the obstacle just hit by the raycast in order to determine the point where there will be no wall next to the character.
-    private void DefineLimits ()
+    // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required 
+    //and the enemy proceeds with its route towards the target. However, if obstacles are present we also need to check the sides by launching 2 other rays which's info might
+    //be useful for later.
+    private void LookForObstacles ()
     {
-        if (xAxis == true)
-        {
-            Vector3 positiveLimit = hitInfoNew.transform.position + new Vector3 (hitInfoNew.collider.bounds.extents.x, 0, 0);
-            Vector3 negativeLimit = hitInfoNew.transform.position - new Vector3 (hitInfoNew.collider.bounds.extents.x, 0, 0);
+        bool clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false &&
+            Physics.Linecast (raycastOrigins[1].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false;
 
-            if (Vector3.Angle (this.transform.forward, positiveLimit - this.transform.position) <
-                Vector3.Angle (this.transform.forward, negativeLimit - this.transform.position))
-            {
-                limit = positiveLimit.x;
-            }
-            else
-            {
-                limit = negativeLimit.x;
-            }
+        if (clearToTarget == true)
+        {
+            frontObsR = false;
+            frontObsL = false;
+            sideObsR = false;
+            sideObsL = false;
+            closeObstacle = false;
+            deviation = 0;
         }
         else
         {
-            Vector3 positiveLimit = hitInfoNew.transform.position + new Vector3 (0, 0, hitInfoNew.collider.bounds.extents.z);
-            Vector3 negativeLimit = hitInfoNew.transform.position - new Vector3 (0, 0, hitInfoNew.collider.bounds.extents.z);
-
-            if (Vector3.Angle (this.transform.forward, positiveLimit - this.transform.position) <
-                Vector3.Angle (this.transform.forward, negativeLimit - this.transform.position))
-            {
-                limit = positiveLimit.z;
-            }
-            else
-            {
-                limit = negativeLimit.z;
-            }
-        }
-        hitInfoOld = hitInfoNew;
-    }
-
-
-            if (rightObstacle == true ||
-            Physics.Raycast(raycastOrigins[0].position, raycastOrigins[0].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
-        {
-            targetRotation.y -= angle;
-            rightObstacle = true;
-            print("Obstacle on the right");
-
-    /*if (hitInfoNew.transform != hitInfoOld.transform)
-    {
-        xAxis = hitInfoNew.collider.bounds.extents.x > hitInfoNew.collider.bounds.extents.z;
-
-        DefineLimits ();
-    }
-
-    if (xAxis == true)
-    {
-        if (Mathf.Sign (limit) == -1 && (this.transform.position.x + colliderLimit) < limit || 
-            Mathf.Sign (limit) == +1 && (this.transform.position.x - colliderLimit) > limit)
-        {
-            rightObstacle = false;
+            frontObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out frontObsRInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            frontObsL = Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out frontObsLInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            sideObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].right, out sideObsRInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            sideObsL = Physics.Raycast (raycastOrigins[1].position, -raycastOrigins[1].right, out sideObsLInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            closeObstacle = (frontObsL == true && frontObsLInfo.distance < frontRaysDst / 5) || (frontObsR == true && frontObsRInfo.distance < frontRaysDst / 5);
         }
     }
-    else
+
+
+    // We change the value of the deviation we'll add to the rotation of the enemy, we'll also reset the deviation value to 0 if the rotation direction changes suddenly.
+    private void ChangeDeviation (bool add)
     {
-        if (Mathf.Sign (limit) == -1 && (this.transform.position.z + colliderLimit) < limit ||
-            Mathf.Sign (limit) == +1 && (this.transform.position.z - colliderLimit) > limit)
+        if ((Mathf.Sign (deviation) == +1 && add == false) || Mathf.Sign (deviation) == -1 && add == true)
         {
-            rightObstacle = false;
+            deviation = 0;
         }
-    }*/
-        /*else
+        if (add == true)
         {
-            if (leftObstacle == true ||
-                Physics.Raycast(raycastOrigins[1].position, raycastOrigins[1].forward, out hitInfoNew, distance, obstacleMask, QueryTriggerInteraction.Collide) == true)
-            {
-                targetRotation.y += angle;
-                leftObstacle = true;
-                print("Obstacle on the left");
+            deviation += dodgeAngle;
+        }
+        else
+        {
+            deviation -= dodgeAngle;
+        }
 
-                /*if (hitInfoNew.transform != hitInfoOld.transform)
-                {
-                    xAxis = hitInfoNew.collider.bounds.extents.x > hitInfoNew.collider.bounds.extents.z;
-
-                    DefineLimits ();
-                }
-
-                if (xAxis == true)
-                {
-                    if (Mathf.Sign (limit) == -1 && (this.transform.position.x + colliderLimit) < limit ||
-                        Mathf.Sign (limit) == +1 && (this.transform.position.x - colliderLimit) > limit)
-                    {
-                        leftObstacle = false;
-                    }
-                }
-                else
-                {
-                    if (Mathf.Sign (limit) == -1 && (this.transform.position.z + colliderLimit) < limit ||
-                        Mathf.Sign (limit) == +1 && (this.transform.position.z - colliderLimit) > limit)
-                    {
-                        leftObstacle = false;
-                    }
-                }
-            }
-        }*/
+        deviation = Mathf.Clamp (deviation, -270, +270);
+    }
+}
