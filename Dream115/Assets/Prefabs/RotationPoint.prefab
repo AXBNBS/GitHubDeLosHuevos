@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3768531434297013951}
   - component: {fileID: 5874917407647323352}
   - component: {fileID: 4545807742293848605}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: RotationPoint
   m_TagString: rotationPoint
   m_Icon: {fileID: 0}
@@ -43,8 +43,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 8.752972, z: 1}
+  m_Center: {x: 0, y: -0.56682587, z: 0}
 --- !u!114 &4545807742293848605
 MonoBehaviour:
   m_ObjectHideFlags: 0
