@@ -9,15 +9,16 @@ using UnityEngine.UI;
 public class PlayerInteraction : MonoBehaviour
 {
     public static PlayerInteraction Instance;
-    public GameObject player3DModel;
     public string[] text;
     [SerializeField] private Text shownText;
     [SerializeField] private CameraMovement cameraRef;
+    [SerializeField] private Renderer normalPlayerRnd, invisiblePlayerRnd, actualPlayerRnd;
     private GameObject panel;
     private int activeParagraph, lettersRead;
-    private bool paragraphEnd, textEnd;
+    private bool paragraphEnd, textEnd, changeVisibility, invisibilize;
     private char currentLetter;
     private NewPlayerMovement movementRef;
+    private Material[] normalMat, invisibleMat, actualMat;
 
 
     // Awake is always called before any Start function and after every object has been initialized.
@@ -37,26 +38,26 @@ public class PlayerInteraction : MonoBehaviour
         lettersRead = 0;
         paragraphEnd = false;
         textEnd = false;
+        changeVisibility = false;
+        invisibilize = false;
         movementRef = this.GetComponent<NewPlayerMovement> ();
+        normalMat = normalPlayerRnd.sharedMaterials;
+        invisibleMat = invisiblePlayerRnd.sharedMaterials;
+        actualMat = actualPlayerRnd.materials;
+        foreach (Material m in actualMat)
+        {
+            StandardShaderUtils.ChangeRenderMode (m, StandardShaderUtils.BlendMode.Transparent);
+        }
     }
-
-    public void hidePanelText()
-    {
-        shownText.text = "";
-        textEnd = true;
-        activeParagraph = 0;
-        cameraRef.allowInput = true;
-        movementRef.allowInput = true;
-
-        panel.SetActive(false);
-
-
-    } 
 
 
     // Update is called once per frame.
     private void Update ()
     {
+        if (changeVisibility == true)
+        {
+            ChangePlayerVisibility ();
+        }
 
         if (text != null) //Input.GetButtonDown("Interact") == true && 
         {
@@ -80,7 +81,7 @@ public class PlayerInteraction : MonoBehaviour
                     lettersRead = 0;
                     if (activeParagraph == text.Length)
                     {
-                        hidePanelText();
+                        HidePanelText ();
                     }
                 }
                 else
@@ -91,6 +92,18 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
         }
+    }
+
+
+    public void HidePanelText ()
+    {
+        shownText.text = "";
+        textEnd = true;
+        activeParagraph = 0;
+        cameraRef.allowInput = true;
+        movementRef.allowInput = true;
+
+        panel.SetActive (false);
     }
 
 
@@ -146,32 +159,56 @@ public class PlayerInteraction : MonoBehaviour
     }
 
 
-    // Llama a la corrutina.
+    // We make changes in order to cause the player to start invisibilizing.
     public void DalsyCatched ()
     {
-        StartCoroutine (InvisibilizePlayer ());
+        changeVisibility = true;
+        invisibilize = true;
     }
 
 
-    // Corrutina.
-    IEnumerator InvisibilizePlayer ()
+    // Function that makes the player model interpolate between its normal and transparent versions. When the player is completely invisibilized, a coroutine will be called
+    //in order to wait a certain amount of time before making the player become visible again.
+    private void ChangePlayerVisibility ()
     {
-        float timeInvisible = 5.0f;
-        int parpadeosAux = 0;
-        int numeroParpadeos = 10;
-        PlayerStats.Instance.playerInvisible = true; //Para los enemigos
-
-        while (parpadeosAux < numeroParpadeos)
+        for (int i = 0; i < actualMat.Length; i += 1)
         {
-            player3DModel.SetActive (parpadeosAux % 2 == 0);
-
-            yield return new WaitForSeconds (timeInvisible / numeroParpadeos);
-
-            parpadeosAux++;
+            if (invisibilize == true)
+            {
+                actualMat[i].Lerp (actualMat[i], invisibleMat[i], Time.deltaTime);
+            }
+            else
+            {
+                actualMat[i].Lerp (actualMat[i], normalMat[i], Time.deltaTime);
+            }
+            print(actualMat[i].color.a);
         }
 
-        PlayerStats.Instance.playerInvisible = false; //Para los enemigos
+        if ((invisibilize == true && actualMat[1].color.a <= 0.55f) || (invisibilize == false && actualMat[1].color.a > 0.95f))
+        {
+            if (invisibilize == true)
+            {
+                PlayerStats.Instance.playerInvisible = true;
 
-        player3DModel.SetActive (true);
+                StartCoroutine (RemainInvisible ());
+            }
+            else
+            {
+                PlayerStats.Instance.playerInvisible = false;
+            }
+
+            changeVisibility = false;
+        }
+    }
+    
+
+    // Coroutine that will wait for 5 seconds before making the player start becoming visible again.
+    IEnumerator RemainInvisible ()
+    {
+        yield return new WaitForSeconds (5);
+
+        changeVisibility = true;
+        invisibilize = false;
+        print("yes");
     }
 }

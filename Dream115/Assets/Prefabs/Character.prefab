@@ -223,10 +223,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 522b5d61eaf9ba14bb235626ae2ae3de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player3DModel: {fileID: 3015085556587002341}
   text: []
   shownText: {fileID: 0}
   cameraRef: {fileID: 0}
+  normalPlayerRnd: {fileID: -5650097490620632511, guid: f86964758db024b41ad09a6300903ead,
+    type: 3}
+  invisiblePlayerRnd: {fileID: -5650097490620632511, guid: 3940761a8c18894498ef3fe4ffe42891,
+    type: 3}
+  actualPlayerRnd: {fileID: 7737328213779747501}
 --- !u!114 &670582061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,15 +332,15 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 54a79ac5459dcdb439c5640f51347efe, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f86964758db024b41ad09a6300903ead, type: 3}
---- !u!1 &3015085556587002341 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: f86964758db024b41ad09a6300903ead,
-    type: 3}
-  m_PrefabInstance: {fileID: 6554515645718339820}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2273444310505589750 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: f86964758db024b41ad09a6300903ead,
+    type: 3}
+  m_PrefabInstance: {fileID: 6554515645718339820}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7737328213779747501 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -5650097490620632511, guid: f86964758db024b41ad09a6300903ead,
     type: 3}
   m_PrefabInstance: {fileID: 6554515645718339820}
   m_PrefabAsset: {fileID: 0}

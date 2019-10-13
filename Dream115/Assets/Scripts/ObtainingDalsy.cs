@@ -1,34 +1,38 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class ObtainingDalsy : MonoBehaviour
 {    
-
-    // Start is called before the first frame update
-    void Start()
+    // Start is called before the first frame update.
+    private void Start ()
     {
     }
 
-    // Update is called once per frame
-    void Update()
+
+    // Update is called once per frame.
+    private void Update ()
     {
-        
     }
 
-    private void OnTriggerEnter(Collider col)
+
+    private void OnTriggerEnter (Collider col)
     {
-        if(col.gameObject.tag.Equals("Player"))
+        if (col.gameObject.tag.Equals ("Player") == true)
         {
-            ObtainDalsy();
+            ObtainDalsy ();
         }
     }
 
-    private void ObtainDalsy()
+
+    private void ObtainDalsy ()
     {
-        PlayerInteraction.Instance.DalsyCatched();
+        PlayerInteraction.Instance.DalsyCatched ();
 
         //PlayerStatsController player = ; //playerisinvisible
-        Destroy(gameObject);
+        Destroy (this.gameObject);
     }
 }

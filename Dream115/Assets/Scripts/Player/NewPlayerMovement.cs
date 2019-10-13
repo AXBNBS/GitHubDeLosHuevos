@@ -8,17 +8,17 @@ using UnityEngine;
 public class NewPlayerMovement : MonoBehaviour
 {
     public bool allowInput;
+    public GameObject claim;
 
+    //[SerializeField] private Renderer model;
+    //private Material[] materials;
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;
     private CharacterController characterCtr;
     private Animator animator;
-
     private PlayerLife playerLife;
     private bool invulnerability = false; //Invulnerabilidad
-
-    public GameObject claim;
     private GameObject auxTransform;
 
 
@@ -26,6 +26,7 @@ public class NewPlayerMovement : MonoBehaviour
     private void Start ()
     {
         allowInput = true;
+        //materials = model.materials;
         walkSpd = 10;
         runSpd = 16;
         rotationSpd = 10;
@@ -156,9 +157,9 @@ public class NewPlayerMovement : MonoBehaviour
     }
 
 
-    IEnumerator InvulnerabilityWaitTime()
+    IEnumerator InvulnerabilityWaitTime ()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds (2f);
         invulnerability = false;
     }
 }

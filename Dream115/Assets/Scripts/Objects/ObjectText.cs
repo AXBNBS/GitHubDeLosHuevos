@@ -27,7 +27,7 @@ public class ObjectText : MonoBehaviour
         {
             PlayerStats.Instance.RegalosRecogidos++;
             playerInsideCollider = false;
-            playerInt.hidePanelText();
+            playerInt.HidePanelText ();
             playerInt.text = null;
             Destroy(this.gameObject);
         }
@@ -52,7 +52,7 @@ public class ObjectText : MonoBehaviour
         if (other.tag == "Player")
         {
             playerInsideCollider = false;
-            playerInt.hidePanelText();
+            playerInt.HidePanelText ();
             playerInt.text = null;
         }
     }
