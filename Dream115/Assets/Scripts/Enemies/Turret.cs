@@ -30,6 +30,11 @@ public class Turret : MonoBehaviour
 
     public Enemy[] enemies; //Cada enemigo guarda toda la lista de enemigos para llamarles si ve al personaje
 
+    public GameObject shot; //Objeto que se disparara
+    public Transform shotSpawn; //Spawn del disparo
+
+    private float fireRate = 3f; //Rate de disparo para que no este continuamente disparando
+    private float nextFire = 0f; //Tiempo que falta para el siguiente disparo
 
     // Start is called before the first frame update
     void Start()
@@ -66,9 +71,16 @@ public class Turret : MonoBehaviour
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
                 {
                     actualState = state.DETECTED;//Si ve al personaje pasa a estado de persecucion
+                    turnSpeed = 3.0f;
                     return;
                 }
             }
+        }
+
+        if (actualState == state.DETECTED)
+        {
+            actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
+            turnSpeed = 2.0f;
         }
     }
 
@@ -83,7 +95,7 @@ public class Turret : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
 
         float distToTarget = Vector3.Distance(transform.position, target.position);
-        if (Physics.Raycast(transform.position, transform.forward, distToTarget, rotationPoint))
+        if (Physics.Raycast(transform.position, transform.forward, distToTarget, rotationPoint) && actualState==state.PATROL)
         {
             target = target.gameObject.GetComponent<Waypoint>().nextPoint;
             auxTarget = target;
@@ -94,6 +106,23 @@ public class Turret : MonoBehaviour
             light.color = Color.blue;
             target = auxTarget;
         }
+        else
+        {
+            light.color = Color.red;
+            target = player;
+
+            if (Vector3.Distance(transform.position, target.position) <= viewRadius && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
+            {
+               //animator.SetTrigger("Shoot");
+                nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
+                Fire(); //Dispara
+            }
+        }
+    }
+
+    private void Fire() //Disparo
+    {
+        Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
