@@ -133,6 +133,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4131595994291659123, guid: 9229fb8b743186e48ae84b41d2bd18ab,
+        type: 3}
+      propertyPath: m_Name
+      value: LubinaEnemy
+      objectReference: {fileID: 0}
     - target: {fileID: 3227448349917121244, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
       propertyPath: light
@@ -158,11 +163,17 @@ PrefabInstance:
       propertyPath: rotationPoint.m_Bits
       value: 4096
       objectReference: {fileID: 0}
-    - target: {fileID: 4131595994291659123, guid: 9229fb8b743186e48ae84b41d2bd18ab,
+    - target: {fileID: 3227448349917121244, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
-      propertyPath: m_Name
-      value: LubinaEnemy
-      objectReference: {fileID: 0}
+      propertyPath: shot
+      value: 
+      objectReference: {fileID: 4800648197254437612, guid: 7b288224bcc06f9429d52a17f5d2a06d,
+        type: 3}
+    - target: {fileID: 3227448349917121244, guid: 9229fb8b743186e48ae84b41d2bd18ab,
+        type: 3}
+      propertyPath: shotSpawn
+      value: 
+      objectReference: {fileID: 913831981}
     - target: {fileID: 8903894972273410700, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -401,6 +412,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2407a745b9d19b4fb757e6a4eba29b3, type: 3}
+--- !u!4 &913831981 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8903894972273410700, guid: 9229fb8b743186e48ae84b41d2bd18ab,
+    type: 3}
+  m_PrefabInstance: {fileID: 295474130}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1250,11 +1267,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Waypoint
       objectReference: {fileID: 0}
-    - target: {fileID: 1613371246332498209, guid: 29df9c8a150361f41b0dcb377e059b6b,
-        type: 3}
-      propertyPath: nextPoint
-      value: 
-      objectReference: {fileID: 1984890995}
     - target: {fileID: 1613371246332498208, guid: 29df9c8a150361f41b0dcb377e059b6b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1310,6 +1322,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1613371246332498209, guid: 29df9c8a150361f41b0dcb377e059b6b,
+        type: 3}
+      propertyPath: nextPoint
+      value: 
+      objectReference: {fileID: 1984890995}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29df9c8a150361f41b0dcb377e059b6b, type: 3}
 --- !u!1001 &2967890370242600618
@@ -1392,11 +1409,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: RotationPoint
-      objectReference: {fileID: 0}
-    - target: {fileID: 7010215531609053739, guid: 77603b1024adb2e4eb1586c040b497b7,
-        type: 3}
-      propertyPath: m_Layer
-      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3768531434297013951, guid: 77603b1024adb2e4eb1586c040b497b7,
         type: 3}
