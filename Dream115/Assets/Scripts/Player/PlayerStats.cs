@@ -7,8 +7,9 @@ public class PlayerStats : MonoBehaviour
 {
     
     private int regalosRecogidos;
-
     public int regalosACoger = 1;
+
+    public const float Health = 100; //Vida del personaje
 
     string sceneName;
 

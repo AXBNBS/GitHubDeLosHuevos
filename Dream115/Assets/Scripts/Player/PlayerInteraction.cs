@@ -50,6 +50,12 @@ public class PlayerInteraction : MonoBehaviour
     // Update is called once per frame.
     private void Update ()
     {
+        if (Input.GetButtonDown("Interact"))
+        {
+            PlayerLife.Instance.TakeDamage(25.0f);
+        }
+
+
         /*if (changeVisibility == true)
         {
             ChangePlayerVisibility ();

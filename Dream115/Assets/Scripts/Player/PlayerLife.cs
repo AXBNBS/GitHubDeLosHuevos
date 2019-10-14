@@ -2,9 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerLife : MonoBehaviour
 {
+    //Para el Singletone
+    public static PlayerLife Instance;
+
+    bool isAnimationDamageCoroutineRunning;
+
+    //Para la pérdida de vida
+    public Scrollbar healthBar;
+
     private float actualLife;
     private float maxLife = 100f;
 
@@ -28,6 +37,12 @@ public class PlayerLife : MonoBehaviour
         scene = SceneManager.GetActiveScene();
     }
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    /*
     public void TakeDamage (float damage) //Cuando recibes daño
     {
         actualLife = Mathf.Clamp(actualLife - damage, 0f, maxLife); //Controlas que se mantenga la vida entre los limites
@@ -44,7 +59,7 @@ public class PlayerLife : MonoBehaviour
             DamageAnimation (false); //Haces la animacion de recibir daño
         }
     }
-
+    */
 
     private void RestartScene ()
     {
@@ -84,5 +99,49 @@ public class PlayerLife : MonoBehaviour
         yield return new WaitForSeconds (3f);
 
         RestartScene ();
+    }
+
+    public void TakeDamage(float value)
+    {
+        DamageAnimation(healthBar.size * PlayerStats.Health - value <= 0);
+
+        if(isAnimationDamageCoroutineRunning == false)
+        {
+             StartCoroutine(HealthBarAnimationDamage(value));
+        }
+
+        
+
+
+    }
+
+
+
+    IEnumerator HealthBarAnimationDamage(float value)
+    {
+        isAnimationDamageCoroutineRunning = true;
+        float damageAux = value; //El daño que le quita
+        float animationSpeed = 20.0f;
+        
+        float initialHealth = healthBar.size;
+
+        while(damageAux > 0)
+        {
+            float tick = animationSpeed * Time.fixedDeltaTime;
+
+            damageAux -= tick;
+            healthBar.size = (healthBar.size * PlayerStats.Health - tick) / PlayerStats.Health;
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        healthBar.size = (initialHealth * PlayerStats.Health - value) / PlayerStats.Health;
+
+        if (healthBar.size <= 0)
+        {
+            DamageAnimation(true);
+        }
+
+        isAnimationDamageCoroutineRunning = false;
     }
 }
