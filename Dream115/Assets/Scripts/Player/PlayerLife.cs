@@ -9,7 +9,7 @@ public class PlayerLife : MonoBehaviour
     private float maxLife = 100f;
 
     private CharacterController characterCtr;
-    private Animator animator;
+    private Animator[] animators;
 
     public GameObject canvas;
     private Animator fadeAnimator;
@@ -21,37 +21,68 @@ public class PlayerLife : MonoBehaviour
     {
         actualLife = maxLife;
         characterCtr = this.GetComponent<CharacterController>();
-        animator = this.GetComponentInChildren<Animator>();
+        animators = this.GetComponentsInChildren<Animator> ();
 
         fadeAnimator = canvas.GetComponentInChildren<Animator>();
 
         scene = SceneManager.GetActiveScene();
     }
 
-    public void TakeDamage(float damage) //Cuando recibes daño
+    public void TakeDamage (float damage) //Cuando recibes daño
     {
         actualLife = Mathf.Clamp(actualLife - damage, 0f, maxLife); //Controlas que se mantenga la vida entre los limites
 
         if (actualLife < 0.5f) //Si mueres
         {
-            animator.SetTrigger("Dead"); //Haces la animacion de morir
+            DamageAnimation (true); //Haces la animacion de morir
+
             characterCtr.enabled = false; //Desactivas los controles
             fadeAnimator.SetTrigger("Dead");
             StartCoroutine(PlayerDead());
         } else //Si no mueres
         {
-            animator.SetTrigger("Damaged"); //Haces la animacion de recibir daño
+            DamageAnimation (false); //Haces la animacion de recibir daño
         }
     }
 
-    IEnumerator PlayerDead()
+
+    private void RestartScene ()
     {
-        yield return new WaitForSeconds(3f);
-        RestartScene();
+        SceneManager.LoadScene (scene.name);
     }
 
-    private void RestartScene()
+
+    // We animate the player taking into account the active model and if it has run out of HP or not.
+    private void DamageAnimation (bool dead) 
     {
-        SceneManager.LoadScene(scene.name);
+        int activeModel;
+
+        /*if (animators[0].gameObject.activeSelf == false)
+        {
+            activeModel = 1;
+        }
+        else 
+        {
+            activeModel = 0;
+        }*/
+
+        if (dead == true)
+        {
+            animators[0].SetTrigger ("Dead");
+            animators[1].SetTrigger ("Dead");
+        }
+        else 
+        {
+            animators[0].SetTrigger ("Damaged");
+            animators[1].SetTrigger ("Damaged");
+        }
+    }
+
+
+    IEnumerator PlayerDead ()
+    {
+        yield return new WaitForSeconds (3f);
+
+        RestartScene ();
     }
 }
