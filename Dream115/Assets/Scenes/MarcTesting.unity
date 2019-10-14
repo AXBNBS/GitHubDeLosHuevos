@@ -14896,6 +14896,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   regalosACoger: 1
   playerInvisible: 0
+--- !u!4 &802030041 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6554515646694090810, guid: 6a1d3f989c152144e8d5a665c98543dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 802030031}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &805330458
 GameObject:
   m_ObjectHideFlags: 0
@@ -37395,6 +37401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b9daa2aeb710c74884586e6fae512aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 802030041}
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 512
