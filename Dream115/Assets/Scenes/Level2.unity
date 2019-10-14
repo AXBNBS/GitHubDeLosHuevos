@@ -25874,7 +25874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   housesX: 9
   housesZ: 7
-  housesY: 11
+  housesY: 9
   limit: 25
   differenceX: 3.5
   differenceZ: 2.5
@@ -25883,6 +25883,7 @@ MonoBehaviour:
   transformX: {fileID: 654617809}
   transformXZ: {fileID: 2070623618}
   transformZ: {fileID: 581525857}
+  sense: 0
 --- !u!4 &1200933305
 Transform:
   m_ObjectHideFlags: 0
