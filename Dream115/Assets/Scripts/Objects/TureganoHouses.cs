@@ -12,7 +12,7 @@ public class TureganoHouses : MonoBehaviour
     [SerializeField] private GameObject house;
     [SerializeField] private Transform transformX, transformXZ, transformZ;
     private Transform[, ,] houses;
-    [SerializeField] private bool sense;
+    private bool sense;
     private Vector3 speed;
 
 

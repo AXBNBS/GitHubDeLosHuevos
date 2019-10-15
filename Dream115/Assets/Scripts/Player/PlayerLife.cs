@@ -103,7 +103,7 @@ public class PlayerLife : MonoBehaviour
 
     public void TakeDamage(float value)
     {
-        DamageAnimation(healthBar.size * PlayerStats.Health - value <= 0);
+        DamageAnimation (healthBar.size * PlayerStats.Health - value <= 0);
 
         if(isAnimationDamageCoroutineRunning == false)
         {

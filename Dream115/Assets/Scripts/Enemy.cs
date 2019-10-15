@@ -47,12 +47,12 @@ public class Enemy : MonoBehaviour
 
     public bool backToPatrol;
 
-    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle;
+    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr, currentYesObsItr, targetYesObsItr;
     [SerializeField] private Transform[] raycastOrigins;
-    private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle;
+    [SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
-    private int deviation;
+    // private int deviation, currentNoObsItr;
 
 
     // Start is called before the first frame update
@@ -70,16 +70,17 @@ public class Enemy : MonoBehaviour
         auxTarget = target;
 
         animator = this.GetComponentInChildren<Animator>();
+        currentNoObsItr = 0;
         raycastOrigins = new Transform[2];
 
-        Transform children = this.GetComponentInChildren<Transform>();
+        BoxCollider[] children = this.GetComponentsInChildren<BoxCollider> ();
         int index = 0;
 
-        foreach (Transform t in children)
+        foreach (BoxCollider t in children)
         {
             if (t.tag == "RaycastOrigin")
             {
-                raycastOrigins[index] = t;
+                raycastOrigins[index] = t.transform;
                 index += 1;
             }
         }
@@ -100,6 +101,21 @@ public class Enemy : MonoBehaviour
         FindVisibleTargets ();
         FollowRoute ();
         Move ();
+
+        if (frontObsR == false && frontObsL == false)
+        {
+            currentNoObsItr += 1;
+            //currentYesObsItr = 0;
+        }
+        else 
+        {
+            currentNoObsItr = 0;
+            //currentYesObsItr += 1;
+        }
+        if (currentNoObsItr >= targetNoObsItr) 
+        {
+            deviation = 0;
+        }
     }
 
 
@@ -118,12 +134,16 @@ public class Enemy : MonoBehaviour
         // Rays that represent the raycasts launched from the enemy's shoulders onwards.
         Gizmos.color = Color.yellow;
 
+        /*Gizmos.DrawLine (raycastOrigins[0].position, raycastOrigins[0].forward * frontRaysDst);
+        Gizmos.DrawLine (raycastOrigins[1].position, raycastOrigins[1].forward * frontRaysDst);
+        Gizmos.DrawLine (raycastOrigins[0].position, raycastOrigins[0].right * sideRaysDst);
+        Gizmos.DrawLine (raycastOrigins[1].position, -raycastOrigins[1].right * sideRaysDst);*/
         Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].forward * frontRaysDst);
         Gizmos.DrawRay (raycastOrigins[1].position, raycastOrigins[1].forward * frontRaysDst);
         Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].right * sideRaysDst);
         Gizmos.DrawRay (raycastOrigins[1].position, -raycastOrigins[1].right * sideRaysDst);
 
-        // Lines drawn to represent the linecasts launched from the enemy's shoulders to its current target.
+        // Line that represent the linecasts that go from the enemy's shoulder's to the targed in order to check that the path is clear.
         Gizmos.color = Color.black;
 
         Gizmos.DrawLine (raycastOrigins[0].position, target.position);
@@ -146,6 +166,7 @@ public class Enemy : MonoBehaviour
         {
             transform.Translate (new Vector3 (0, 0, slowMoveSpd * Time.deltaTime));
         }
+        //this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
         
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
@@ -153,12 +174,46 @@ public class Enemy : MonoBehaviour
         if (actualState != state.PATROL || backToPatrol == true)
         {
             LookForObstacles ();
+            if (closeObstacle == true)
+            {
+                if (frontObsL == frontObsR)
+                {
+                    if (frontObsLInfo.distance < frontObsRInfo.distance)
+                    {
+                        this.transform.Translate (frontObsLInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
 
-            if (frontObsL == true && frontObsR == true && sideObsL == true && sideObsR == true)
+                        //targetRotation.y += Vector3.Angle (this.transform.right, frontObsLInfo.normal);
+                    }
+                    else
+                    {
+                        this.transform.Translate (frontObsRInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+
+                        //targetRotation.y -= Vector3.Angle (-this.transform.right, frontObsRInfo.normal);
+                    }
+                }
+                else
+                {
+                    if (frontObsL == true)
+                    {
+                        this.transform.Translate (frontObsLInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+
+                        //targetRotation.y += Vector3.Angle (this.transform.right, frontObsLInfo.normal);
+                    }
+                    else
+                    {
+                        this.transform.Translate (frontObsRInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+
+                        //targetRotation.y -= Vector3.Angle (-this.transform.right, frontObsRInfo.normal);
+                    }
+                }
+            }
+
+            if (sideObsL == true && sideObsR == true && frontObsL == true && frontObsR == true)
             {
                 // If the enemy is not able to see a clear path ahead or at its sides, it will go back.
+                deviation = 0;
                 targetRotation.y += 180;
-                //print ("Unable to see a clear path, going back.");
+                print ("Unable to see a clear path, going back.");
             }
             else
             {
@@ -170,13 +225,13 @@ public class Enemy : MonoBehaviour
                         {
                             // We prioritize dodging the obstacle on the left since that's the closest one.
                             ChangeDeviation (true);
-                            //print("Dodging front left obstacle.");
+                            print("Dodging front left obstacle.");
                         }
                         else
                         {
                             // We prioritize dodging the obstacle on the right since that's the closest one.
                             ChangeDeviation (false);
-                            //print("Dodging front right obstacle.");
+                            print("Dodging front right obstacle.");
                         }
                     }
                     else
@@ -187,13 +242,13 @@ public class Enemy : MonoBehaviour
                             {
                                 // The enemy turns right since that's the better option taking its current rotation into account.
                                 ChangeDeviation (true);
-                                //print("Dodging front obstacle by turning right.");
+                                print("Dodging front obstacle by turning right.");
                             }
                             else
                             {
                                 // The enemy turns left since that's the better option taking its current rotation into account.
                                 ChangeDeviation (false);
-                                //print("Dodging front obstacle by turning left.");
+                                print("Dodging front obstacle by turning left.");
                             }
                         }
                         else
@@ -202,13 +257,13 @@ public class Enemy : MonoBehaviour
                             {
                                 // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
                                 ChangeDeviation (false);
-                                //print("Moving left to avoid the other obstacles.");
+                                print("Moving left to avoid the other obstacles.");
                             }
                             else
                             {
                                 // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
                                 ChangeDeviation (true);
-                                //print("Moving right to avoid the other obstacles.");
+                                print("Moving right to avoid the other obstacles.");
                             }
                         }
                     }
@@ -221,31 +276,31 @@ public class Enemy : MonoBehaviour
                         {
                             // The enemy avoids hitting the corner in front of it by turning right.
                             ChangeDeviation (true);
-                            //print("Avoiding corner by turning right.");
+                            print("Avoiding corner by turning right.");
                         }
                         else
                         {
                             // The enemy avoids hitting the corner in front of it by turning left.
                             ChangeDeviation (false);
-                            //print("Avoiding corner by turning left.");
+                            print("Avoiding corner by turning left.");
                         }
                     }
                     else
                     {
-                        deviation = 0;
                         if (sideObsR == true || sideObsL == true)
                         {
+                            //deviation = 0;
                             if (sideObsL == true)
                             {
                                 // The enemy moves parallel to the wall on its left.
                                 targetRotation.y = +Vector3.Angle (new Vector3 (sideObsLInfo.normal.z, sideObsLInfo.normal.y, sideObsLInfo.normal.x), this.transform.forward);
-                                //print("Moving parallel to the left wall.");
+                                print("Moving parallel to the left wall.");
                             }
                             else
                             {
                                 // The enemy moves parallel to the wall on its right.
                                 targetRotation.y = -Vector3.Angle (new Vector3 (sideObsRInfo.normal.z, sideObsRInfo.normal.y, sideObsRInfo.normal.x), this.transform.forward);
-                                //print("Moving parallel to the right wall.");
+                                print("Moving parallel to the right wall.");
                             }
                         }
                     }
@@ -255,7 +310,7 @@ public class Enemy : MonoBehaviour
       
         Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y + deviation, this.transform.rotation.eulerAngles.z);
 
-        // The enemy will rotate fastes if it's close to an obstacle, in order to avoid clipping throught it.
+        // The enemy will rotate faster if it's close to an obstacle, in order to avoid clipping throught it.
         if (closeObstacle == true)
         {
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, fastTurnSpd * Time.deltaTime);
@@ -283,7 +338,7 @@ public class Enemy : MonoBehaviour
                 Fire(); //Dispara
             }
 
-            if (Vector3.Distance(transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
+            if (Vector3.Distance (transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
             {
                 animator.SetFloat("Speed", 0f);//Para de andar
                 normalMoveSpd = 0;//
@@ -382,7 +437,7 @@ public class Enemy : MonoBehaviour
 
     private void Fire () //Disparo
     {
-        Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
+        Instantiate (shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
     }
 
 
@@ -406,12 +461,11 @@ public class Enemy : MonoBehaviour
     }
 
 
-    // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required 
-    //and the enemy proceeds with its route towards the target. However, if obstacles are present we also need to check the sides by launching 2 other rays which's info might
-    //be useful for later.
+    // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required and the enemy proceeds with its route towards the target. However, if obstacles 
+    //are present we also need to check the sides by launching 2 other rays which's info might be useful for later.
     private void LookForObstacles ()
     {
-        bool clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false &&
+        clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false && 
             Physics.Linecast (raycastOrigins[1].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false;
 
         if (clearToTarget == true)
@@ -421,7 +475,7 @@ public class Enemy : MonoBehaviour
             sideObsR = false;
             sideObsL = false;
             closeObstacle = false;
-            deviation = 0;
+            //deviation = 0;
         }
         else
         {
@@ -429,7 +483,11 @@ public class Enemy : MonoBehaviour
             frontObsL = Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out frontObsLInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
             sideObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].right, out sideObsRInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
             sideObsL = Physics.Raycast (raycastOrigins[1].position, -raycastOrigins[1].right, out sideObsLInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
-            closeObstacle = (frontObsL == true && frontObsLInfo.distance < frontRaysDst / 5) || (frontObsR == true && frontObsRInfo.distance < frontRaysDst / 5);
+            /*frontObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out frontObsRInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            frontObsL = Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out frontObsLInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            sideObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].right, out sideObsRInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
+            sideObsL = Physics.Raycast (raycastOrigins[1].position, -raycastOrigins[1].right, out sideObsLInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);*/
+            closeObstacle = (frontObsR == true && frontObsRInfo.distance < frontRaysDst / 5) || (frontObsL == true && frontObsLInfo.distance < frontRaysDst / 5);
         }
     }
 
