@@ -10,6 +10,7 @@ public class NewPlayerMovement : MonoBehaviour
     public bool allowInput;
     public GameObject claim;
 
+    [SerializeField] private AudioClip clapClp;
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;
@@ -18,6 +19,7 @@ public class NewPlayerMovement : MonoBehaviour
     private PlayerLife playerLife;
     private bool invulnerability = false; //Invulnerabilidad
     private GameObject auxTransform;
+    private AudioSource audioSrc;
 
 
     // Start is called before the first frame update.
@@ -33,23 +35,22 @@ public class NewPlayerMovement : MonoBehaviour
         movement = Vector3.zero;
         characterCtr = this.GetComponent<CharacterController> ();
         animators = this.GetComponentsInChildren<Animator> ();
-
         playerLife = this.GetComponent<PlayerLife>();
+        audioSrc = this.GetComponent<AudioSource> ();
     }
 
     
     // Update is called once per frame.
     private void Update ()
     {
-        /*if (animators[0].gameObject.activeSelf == false)
+        if (allowInput == true && animators[0].GetCurrentAnimatorStateInfo(0).IsTag ("Immovable") == true) 
         {
-            activeModel = 1;
+            allowInput = false;
         }
-        else 
+        if (allowInput == false && animators[0].GetCurrentAnimatorStateInfo(0).IsTag ("Movable") == true)
         {
-            activeModel = 0;
-        }*/
-
+            allowInput = true;
+        }
         if (allowInput == false)
         {
             inputH = 0f;
@@ -74,12 +75,14 @@ public class NewPlayerMovement : MonoBehaviour
             animators[0].SetFloat ("Speed", 0f);
             animators[1].SetFloat ("Speed", 0f);
 
-            if (Input.GetKeyDown(KeyCode.T)) //Cuando estes quieto y aprietes F
+            if (allowInput == true && Input.GetKeyDown (KeyCode.T) == true) //Cuando estes quieto y aprietes F
             {
+                audioSrc.clip = clapClp;
+
                 animators[0].SetTrigger ("Clap"); //Generas una palmada
-                animators[1].SetTrigger ("Clap");
-                //Que hace sonidos
-                CallEnemies();
+                animators[1].SetTrigger ("Clap"); //Que hace sonidos
+                audioSrc.Play ();
+                CallEnemies ();
             }
         }
 
