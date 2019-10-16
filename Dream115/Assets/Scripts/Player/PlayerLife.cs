@@ -25,6 +25,8 @@ public class PlayerLife : MonoBehaviour
 
     private Scene scene;
 
+    private bool die = false; //para que no este todo el rato muriendo
+
     // Start is called before the first frame update
     void Start()
     {
@@ -81,10 +83,13 @@ public class PlayerLife : MonoBehaviour
             activeModel = 0;
         }*/
 
-        if (dead == true)
+        if (dead == true && die == false)
         {
+            die = true;
             animators[0].SetTrigger ("Dead");
             animators[1].SetTrigger ("Dead");
+            fadeAnimator.SetTrigger("Dead");
+            StartCoroutine(PlayerDead());
         }
         else 
         {
@@ -109,13 +114,7 @@ public class PlayerLife : MonoBehaviour
         {
              StartCoroutine(HealthBarAnimationDamage(value));
         }
-
-        
-
-
     }
-
-
 
     IEnumerator HealthBarAnimationDamage(float value)
     {

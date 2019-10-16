@@ -46,7 +46,6 @@ public class Pathfinding : MonoBehaviour
                 }
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
-                if( newMovementCostToNeighbour <)
             }
         }
     }

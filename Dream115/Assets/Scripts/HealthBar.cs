@@ -14,8 +14,4 @@ public class HealthBar : MonoBehaviour
         Health -= value;
         healthBar.size = Health / 100f;
     }
-
-
-
-
 }
