@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 
@@ -20,6 +21,7 @@ public class PlayerInteraction : MonoBehaviour
     private bool paragraphEnd, textEnd;
     private char currentLetter;
     private NewPlayerMovement movementRef;
+    private string sceneName;
     //private Material[] normalMat, invisibleMat, actualMat;
 
 
@@ -44,16 +46,18 @@ public class PlayerInteraction : MonoBehaviour
 
         normalMod.enabled = true;
         invisibleMod.enabled = false;
+
+        sceneName = SceneManager.GetActiveScene().name;
     }
 
 
     // Update is called once per frame.
     private void Update ()
     {
-        if (Input.GetButtonDown("Interact"))
-        {
-            PlayerLife.Instance.TakeDamage(25.0f);
-        }
+        //if (Input.GetButtonDown("Interact"))
+        //{
+          //  PlayerLife.Instance.TakeDamage(25.0f);
+        //}
 
 
         /*if (changeVisibility == true)
@@ -225,4 +229,21 @@ public class PlayerInteraction : MonoBehaviour
 
         ChangePlayerVisibility (false);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "LevelChange")
+        {
+            if (PlayerStats.Instance.RegalosRecogidos == PlayerStats.Instance.RegalosACoger)
+            {
+                switch (sceneName)
+                {
+                    case "Level1":
+                        SceneManager.LoadScene("Level2");
+                        break;
+                }
+            }
+        }
+    }
+
 }

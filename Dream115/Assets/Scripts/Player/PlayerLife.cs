@@ -12,7 +12,7 @@ public class PlayerLife : MonoBehaviour
     bool isAnimationDamageCoroutineRunning;
 
     //Para la pérdida de vida
-    public Scrollbar healthBar;
+    public Slider healthBar;
 
     private float actualLife;
     private float maxLife = 100f;
@@ -108,7 +108,7 @@ public class PlayerLife : MonoBehaviour
 
     public void TakeDamage(float value)
     {
-        DamageAnimation (healthBar.size * PlayerStats.Health - value <= 0);
+        DamageAnimation (healthBar.value * PlayerStats.Health - value <= 0);
 
         if(isAnimationDamageCoroutineRunning == false)
         {
@@ -122,21 +122,21 @@ public class PlayerLife : MonoBehaviour
         float damageAux = value; //El daño que le quita
         float animationSpeed = 20.0f;
         
-        float initialHealth = healthBar.size;
+        float initialHealth = healthBar.value;
 
         while(damageAux > 0)
         {
             float tick = animationSpeed * Time.fixedDeltaTime;
 
             damageAux -= tick;
-            healthBar.size = (healthBar.size * PlayerStats.Health - tick) / PlayerStats.Health;
+            healthBar.value = (healthBar.value * PlayerStats.Health - tick) / PlayerStats.Health;
 
             yield return new WaitForFixedUpdate();
         }
 
-        healthBar.size = (initialHealth * PlayerStats.Health - value) / PlayerStats.Health;
+        healthBar.value = (initialHealth * PlayerStats.Health - value) / PlayerStats.Health;
 
-        if (healthBar.size <= 0)
+        if (healthBar.value <= 0)
         {
             DamageAnimation(true);
         }

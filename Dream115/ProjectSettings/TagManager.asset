@@ -10,6 +10,7 @@ TagManager:
   - Claim
   - RaycastOrigin
   - rotationPoint
+  - LevelChange
   layers:
   - Default
   - TransparentFX
