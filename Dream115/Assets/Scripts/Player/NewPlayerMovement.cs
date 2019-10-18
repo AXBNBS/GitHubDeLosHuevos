@@ -10,16 +10,16 @@ public class NewPlayerMovement : MonoBehaviour
     public bool allowInput;
     public GameObject claim;
 
-    //[SerializeField] private Renderer model;
-    //private Material[] materials;
+    [SerializeField] private AudioClip clapClp;
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;
     private CharacterController characterCtr;
-    private Animator animator;
+    private Animator[] animators;
     private PlayerLife playerLife;
     private bool invulnerability = false; //Invulnerabilidad
     private GameObject auxTransform;
+    private AudioSource audioSrc;
 
 
     // Start is called before the first frame update.
@@ -31,17 +31,26 @@ public class NewPlayerMovement : MonoBehaviour
         runSpd = 16;
         rotationSpd = 10;
         gravity = 8;
+        //activeModel = 0;
         movement = Vector3.zero;
         characterCtr = this.GetComponent<CharacterController> ();
-        animator = this.GetComponentInChildren<Animator> ();
-
+        animators = this.GetComponentsInChildren<Animator> ();
         playerLife = this.GetComponent<PlayerLife>();
+        audioSrc = this.GetComponent<AudioSource> ();
     }
 
     
     // Update is called once per frame.
     private void Update ()
     {
+        if (allowInput == true && animators[0].GetCurrentAnimatorStateInfo(0).IsTag ("Immovable") == true) 
+        {
+            allowInput = false;
+        }
+        if (allowInput == false && animators[0].GetCurrentAnimatorStateInfo(0).IsTag ("Movable") == true)
+        {
+            allowInput = true;
+        }
         if (allowInput == false)
         {
             inputH = 0f;
@@ -63,13 +72,17 @@ public class NewPlayerMovement : MonoBehaviour
             movement.y -= gravity * Time.deltaTime;
 
             characterCtr.Move (movement);
-            animator.SetFloat ("Speed", 0f);
+            animators[0].SetFloat ("Speed", 0f);
+            animators[1].SetFloat ("Speed", 0f);
 
-            if (Input.GetKeyDown(KeyCode.T)) //Cuando estes quieto y aprietes F
+            if (allowInput == true && Input.GetKeyDown (KeyCode.T) == true) //Cuando estes quieto y aprietes F
             {
-                animator.SetTrigger("Clap"); //Generas una palmada
-                //Que hace sonidos
-                CallEnemies();
+                audioSrc.clip = clapClp;
+
+                animators[0].SetTrigger ("Clap"); //Generas una palmada
+                animators[1].SetTrigger ("Clap"); //Que hace sonidos
+                audioSrc.Play ();
+                CallEnemies ();
             }
         }
 
@@ -122,14 +135,15 @@ public class NewPlayerMovement : MonoBehaviour
         {
             movement *= runSpd;
 
-            animator.SetFloat ("Speed", runSpd);
-
+            animators[0].SetFloat ("Speed", runSpd);
+            animators[1].SetFloat ("Speed", runSpd);
         }
         else
         {
             movement *= walkSpd;
 
-            animator.SetFloat ("Speed", walkSpd);
+            animators[0].SetFloat ("Speed", walkSpd);
+            animators[1].SetFloat ("Speed", walkSpd);
         }
 
         movement.y -= gravity * Time.deltaTime;
@@ -160,6 +174,7 @@ public class NewPlayerMovement : MonoBehaviour
     IEnumerator InvulnerabilityWaitTime ()
     {
         yield return new WaitForSeconds (2f);
+
         invulnerability = false;
     }
 }

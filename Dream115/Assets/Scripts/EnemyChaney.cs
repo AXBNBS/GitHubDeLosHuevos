@@ -55,6 +55,7 @@ public class EnemyChaney : MonoBehaviour
     private int deviation;
 
     private bool charging = false; //Para saber si esta cargando o no
+    private bool stopped = false; //Para saber si esta parado
 
     // Start is called before the first frame update
     void Start ()
@@ -266,7 +267,7 @@ public class EnemyChaney : MonoBehaviour
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
         }
 
-        if (actualState == state.CHASE || charging) //Si ha visto al personaje o esta cargando
+        if ((actualState == state.CHASE || charging) && !stopped) //Si ha visto al personaje o esta cargando
         {
             light.color = Color.red;
             actualState = state.CHASE;
@@ -325,8 +326,11 @@ public class EnemyChaney : MonoBehaviour
         {
             light.color = Color.blue;
             target = auxTarget;
-            animator.SetFloat("Speed", 1f);
-            normalMoveSpd = 5.0f;
+            if (!stopped)
+            {
+                animator.SetFloat("Speed", 1f);
+                normalMoveSpd = 5.0f;
+            }
         }
     }
 
@@ -345,6 +349,8 @@ public class EnemyChaney : MonoBehaviour
                     normalMoveSpd = 0;
                     charging = false;
                     animator.SetTrigger("Stop");
+                    stopped = true;
+                    StartCoroutine(StopTime());
                 }
                 auxTarget = target;
             }
@@ -461,5 +467,12 @@ public class EnemyChaney : MonoBehaviour
         }
 
         deviation = Mathf.Clamp (deviation, -270, +270);
+    }
+
+    IEnumerator StopTime()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        stopped = false;
     }
 }
