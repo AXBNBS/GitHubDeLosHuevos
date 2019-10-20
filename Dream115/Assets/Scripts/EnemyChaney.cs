@@ -53,9 +53,10 @@ public class EnemyChaney : MonoBehaviour
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
     private int deviation;
-
     private bool charging = false; //Para saber si esta cargando o no
     private bool stopped = false; //Para saber si esta parado
+    private SpriteRenderer[] minimapIcons;
+
 
     // Start is called before the first frame update
     void Start ()
@@ -93,6 +94,7 @@ public class EnemyChaney : MonoBehaviour
         closeObstacle = false;
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 2;
         deviation = 0;
+        minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
     }
 
 
@@ -102,6 +104,17 @@ public class EnemyChaney : MonoBehaviour
         FindVisibleTargets ();
         FollowRoute ();
         Move ();
+
+        if (actualState == state.CHASE)
+        {
+            minimapIcons[0].enabled = false;
+            minimapIcons[1].enabled = true;
+        }
+        else 
+        {
+            minimapIcons[0].enabled = true;
+            minimapIcons[1].enabled = false;
+        }
     }
 
 

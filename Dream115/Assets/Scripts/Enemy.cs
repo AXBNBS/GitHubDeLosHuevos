@@ -52,7 +52,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
-    // private int deviation, currentNoObsItr;
+    private SpriteRenderer[] minimapIcons;
 
 
     // Start is called before the first frame update
@@ -92,6 +92,7 @@ public class Enemy : MonoBehaviour
         closeObstacle = false;
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 2;
         deviation = 0;
+        minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
     }
 
 
@@ -115,6 +116,16 @@ public class Enemy : MonoBehaviour
         if (currentNoObsItr >= targetNoObsItr) 
         {
             deviation = 0;
+        }
+        if (actualState == state.CHASE)
+        {
+            minimapIcons[0].enabled = false;
+            minimapIcons[1].enabled = true;
+        }
+        else 
+        {
+            minimapIcons[0].enabled = true;
+            minimapIcons[1].enabled = false;
         }
     }
 

@@ -5,17 +5,20 @@ using UnityEngine;
 
 
 
-// I may actually use this sometime.
 public class MapCamera : MonoBehaviour
 {
+    private Transform target;
+    
     // Start is called before the first frame update.
     private void Start ()
     {
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
 
     // Update is called once per frame.
     private void Update ()
     {
+        this.transform.position = new Vector3 (target.position.x, this.transform.position.y, target.position.z);
     }
 }

@@ -35,26 +35,41 @@ public class Turret : MonoBehaviour
 
     private float fireRate = 3f; //Rate de disparo para que no este continuamente disparando
     private float nextFire = 0f; //Tiempo que falta para el siguiente disparo
+    private SpriteRenderer[] minimapIcons;
+
 
     // Start is called before the first frame update
     void Start()
     {
         actualState = state.PATROL;
-        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+        transform.LookAt (new Vector3 (target.position.x, transform.position.y, target.position.z));
 
         viewRadius = 30f;
         viewAngle = 50f;
-
         light = light.GetComponent<Light>();
         auxTarget = target;
+        minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
     }
 
+
     // Update is called once per frame
-    void Update()
+    void Update ()
     {
-        FindVisibleTargets();
-        Move();
+        FindVisibleTargets ();
+        Move ();
+
+        if (actualState == state.DETECTED)
+        {
+            minimapIcons[0].enabled = false;
+            minimapIcons[1].enabled = true;
+        }
+        else 
+        {
+            minimapIcons[0].enabled = true;
+            minimapIcons[1].enabled = false;
+        }
     }
+
 
     private void FindVisibleTargets()
     {
