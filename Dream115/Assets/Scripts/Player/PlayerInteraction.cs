@@ -24,6 +24,8 @@ public class PlayerInteraction : MonoBehaviour
     private string sceneName;
     //private Material[] normalMat, invisibleMat, actualMat;
 
+    public GameObject canvas;
+    private Animator fadeAnimator;
 
     // Awake is always called before any Start function and after every object has been initialized.
     private void Awake ()
@@ -48,6 +50,8 @@ public class PlayerInteraction : MonoBehaviour
         invisibleMod.enabled = false;
 
         sceneName = SceneManager.GetActiveScene().name;
+
+        fadeAnimator = canvas.GetComponentInChildren<Animator>();
     }
 
 
@@ -236,14 +240,31 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (PlayerStats.Instance.RegalosRecogidos == PlayerStats.Instance.RegalosACoger)
             {
-                switch (sceneName)
-                {
-                    case "Level1":
-                        SceneManager.LoadScene("Level2");
-                        break;
-                }
+                fadeAnimator.SetTrigger("Dead");
+                StartCoroutine(ChangeLevel());
+                
             }
         }
     }
 
+    IEnumerator ChangeLevel()
+    {
+        yield return new WaitForSeconds(3f);
+
+        switch (sceneName)
+        {
+            case "Level1":
+                SceneManager.LoadScene("Level2");
+                break;
+            case "Level2":
+                SceneManager.LoadScene("Level3");
+                break;
+            case "Level3":
+                SceneManager.LoadScene("Level4");
+                break;
+            case "Level4":
+                SceneManager.LoadScene("menu_principal");
+                break;
+        }
+    }
 }
