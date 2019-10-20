@@ -47,7 +47,7 @@ public class Enemy : MonoBehaviour
 
     public bool backToPatrol;
 
-    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr, currentYesObsItr, targetYesObsItr;
+    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
     [SerializeField] private Transform[] raycastOrigins;
     [SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
@@ -56,20 +56,20 @@ public class Enemy : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start ()
+    private void Start ()
     {
         //this.transform.position = target.position;
         actualState = state.PATROL;
-        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+
+        transform.LookAt (new Vector3 (target.position.x, transform.position.y, target.position.z));
 
         viewRadius = 30f;
         viewAngle = 120f;
         viewRadiusShoot = viewRadius / 1.5f; //Distancia donde dispararía el enemigo
 
-        light = light.GetComponent<Light>();
+        light = light.GetComponent<Light> ();
         auxTarget = target;
-
-        animator = this.GetComponentInChildren<Animator>();
+        animator = this.GetComponentInChildren<Animator> ();
         currentNoObsItr = 0;
         raycastOrigins = new Transform[2];
 
@@ -185,6 +185,7 @@ public class Enemy : MonoBehaviour
         if (actualState != state.PATROL || backToPatrol == true)
         {
             LookForObstacles ();
+
             if (closeObstacle == true)
             {
                 if (frontObsL == frontObsR)
@@ -224,7 +225,7 @@ public class Enemy : MonoBehaviour
                 // If the enemy is not able to see a clear path ahead or at its sides, it will go back.
                 deviation = 0;
                 targetRotation.y += 180;
-                print ("Unable to see a clear path, going back.");
+                //print ("Unable to see a clear path, going back.");
             }
             else
             {
@@ -236,13 +237,13 @@ public class Enemy : MonoBehaviour
                         {
                             // We prioritize dodging the obstacle on the left since that's the closest one.
                             ChangeDeviation (true);
-                            print("Dodging front left obstacle.");
+                            //print("Dodging front left obstacle.");
                         }
                         else
                         {
                             // We prioritize dodging the obstacle on the right since that's the closest one.
                             ChangeDeviation (false);
-                            print("Dodging front right obstacle.");
+                            //print("Dodging front right obstacle.");
                         }
                     }
                     else
@@ -253,13 +254,13 @@ public class Enemy : MonoBehaviour
                             {
                                 // The enemy turns right since that's the better option taking its current rotation into account.
                                 ChangeDeviation (true);
-                                print("Dodging front obstacle by turning right.");
+                                //print("Dodging front obstacle by turning right.");
                             }
                             else
                             {
                                 // The enemy turns left since that's the better option taking its current rotation into account.
                                 ChangeDeviation (false);
-                                print("Dodging front obstacle by turning left.");
+                                //print("Dodging front obstacle by turning left.");
                             }
                         }
                         else
@@ -268,13 +269,13 @@ public class Enemy : MonoBehaviour
                             {
                                 // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
                                 ChangeDeviation (false);
-                                print("Moving left to avoid the other obstacles.");
+                                //print("Moving left to avoid the other obstacles.");
                             }
                             else
                             {
                                 // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
                                 ChangeDeviation (true);
-                                print("Moving right to avoid the other obstacles.");
+                                //print("Moving right to avoid the other obstacles.");
                             }
                         }
                     }
@@ -287,13 +288,13 @@ public class Enemy : MonoBehaviour
                         {
                             // The enemy avoids hitting the corner in front of it by turning right.
                             ChangeDeviation (true);
-                            print("Avoiding corner by turning right.");
+                            //print("Avoiding corner by turning right.");
                         }
                         else
                         {
                             // The enemy avoids hitting the corner in front of it by turning left.
                             ChangeDeviation (false);
-                            print("Avoiding corner by turning left.");
+                            //print("Avoiding corner by turning left.");
                         }
                     }
                     else
@@ -305,13 +306,13 @@ public class Enemy : MonoBehaviour
                             {
                                 // The enemy moves parallel to the wall on its left.
                                 targetRotation.y = +Vector3.Angle (new Vector3 (sideObsLInfo.normal.z, sideObsLInfo.normal.y, sideObsLInfo.normal.x), this.transform.forward);
-                                print("Moving parallel to the left wall.");
+                                //print("Moving parallel to the left wall.");
                             }
                             else
                             {
                                 // The enemy moves parallel to the wall on its right.
                                 targetRotation.y = -Vector3.Angle (new Vector3 (sideObsRInfo.normal.z, sideObsRInfo.normal.y, sideObsRInfo.normal.x), this.transform.forward);
-                                print("Moving parallel to the right wall.");
+                                //print("Moving parallel to the right wall.");
                             }
                         }
                     }
@@ -478,7 +479,6 @@ public class Enemy : MonoBehaviour
     {
         clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false && 
             Physics.Linecast (raycastOrigins[1].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false;
-
         if (clearToTarget == true)
         {
             frontObsR = false;

@@ -789,6 +789,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: LubinaEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4131595994291659123, guid: 9229fb8b743186e48ae84b41d2bd18ab,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8903894972273410700, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -892,7 +897,7 @@ PrefabInstance:
     - target: {fileID: 8748211041554368559, guid: da9b8eb907f6cf943b3070ea7cd194e9,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8748211041554368556, guid: da9b8eb907f6cf943b3070ea7cd194e9,
         type: 3}
@@ -953,6 +958,14 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 510417304}
+    - target: {fileID: 392554140, guid: da9b8eb907f6cf943b3070ea7cd194e9, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 6554515646946445223}
+    - target: {fileID: 392554140, guid: da9b8eb907f6cf943b3070ea7cd194e9, type: 3}
+      propertyPath: sideRaysDst
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8748211041554368558, guid: da9b8eb907f6cf943b3070ea7cd194e9,
         type: 3}
       propertyPath: target

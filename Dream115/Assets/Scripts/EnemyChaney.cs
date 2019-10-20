@@ -47,35 +47,35 @@ public class EnemyChaney : MonoBehaviour
 
     public bool backToPatrol;
 
-    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle;
+    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
     [SerializeField] private Transform[] raycastOrigins;
-    private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle;
+    [SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
-    private int deviation;
     private bool charging = false; //Para saber si esta cargando o no
     private bool stopped = false; //Para saber si esta parado
     private SpriteRenderer[] minimapIcons;
 
 
     // Start is called before the first frame update
-    void Start ()
+    private void Start ()
     {
         //this.transform.position = target.position;
         actualState = state.PATROL;
-        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+
+        transform.LookAt (new Vector3 (target.position.x, transform.position.y, target.position.z));
 
         viewRadius = 30f;
         viewAngle = 120f;
         //viewRadiusShoot = viewRadius / 1.5f; //Distancia donde dispararía el enemigo
 
-        light = light.GetComponent<Light>();
+        light = light.GetComponent<Light> ();
         auxTarget = target;
 
-        animator = this.GetComponentInChildren<Animator>();
+        animator = this.GetComponentInChildren<Animator> ();
         raycastOrigins = new Transform[2];
 
-        Transform children = this.GetComponentInChildren<Transform>();
+        Transform children = this.GetComponentInChildren<Transform> ();
         int index = 0;
 
         foreach (Transform t in children)
@@ -105,6 +105,20 @@ public class EnemyChaney : MonoBehaviour
         FollowRoute ();
         Move ();
 
+        if (frontObsR == false && frontObsL == false)
+        {
+            currentNoObsItr += 1;
+            //currentYesObsItr = 0;
+        }
+        else
+        {
+            currentNoObsItr = 0;
+            //currentYesObsItr += 1;
+        }
+        if (currentNoObsItr >= targetNoObsItr)
+        {
+            deviation = 0;
+        }
         if (actualState == state.CHASE)
         {
             minimapIcons[0].enabled = false;
@@ -169,9 +183,36 @@ public class EnemyChaney : MonoBehaviour
         {
             LookForObstacles ();
 
+            if (closeObstacle == true)
+            {
+                if (frontObsL == frontObsR)
+                {
+                    if (frontObsLInfo.distance < frontObsRInfo.distance)
+                    {
+                        this.transform.Translate (frontObsLInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+                    }
+                    else
+                    {
+                        this.transform.Translate (frontObsRInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+                    }
+                }
+                else
+                {
+                    if (frontObsL == true)
+                    {
+                        this.transform.Translate (frontObsLInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+                    }
+                    else
+                    {
+                        this.transform.Translate (frontObsRInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
+                    }
+                }
+            }
+
             if (frontObsL == true && frontObsR == true && sideObsL == true && sideObsR == true)
             {
                 // If the enemy is not able to see a clear path ahead or at its sides, it will go back.
+                deviation = 0;
                 targetRotation.y += 180;
                 //print ("Unable to see a clear path, going back.");
             }
@@ -247,7 +288,7 @@ public class EnemyChaney : MonoBehaviour
                     }
                     else
                     {
-                        deviation = 0;
+                        //deviation = 0;
                         if (sideObsR == true || sideObsL == true)
                         {
                             if (sideObsL == true)
@@ -270,7 +311,7 @@ public class EnemyChaney : MonoBehaviour
       
         Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y + deviation, this.transform.rotation.eulerAngles.z);
 
-        // The enemy will rotate fastes if it's close to an obstacle, in order to avoid clipping throught it.
+        // The enemy will rotate faster if it's close to an obstacle, in order to avoid clipping throught it.
         if (closeObstacle == true)
         {
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, fastTurnSpd * Time.deltaTime);
@@ -280,11 +321,11 @@ public class EnemyChaney : MonoBehaviour
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
         }
 
-        if ((actualState == state.CHASE || charging) && !stopped) //Si ha visto al personaje o esta cargando
+        if ((actualState == state.CHASE || charging == true) && stopped == false) //Si ha visto al personaje o esta cargando
         {
             light.color = Color.red;
             actualState = state.CHASE;
-            animator.SetFloat("Speed", 12f);//Sigue persiguiendo al personaje
+            animator.SetFloat ("Speed", 12f);//Sigue persiguiendo al personaje
             normalMoveSpd = 15.0f;
             /*foreach (EnemyChaney enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
@@ -435,14 +476,12 @@ public class EnemyChaney : MonoBehaviour
     }*/
 
 
-    // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required 
-    //and the enemy proceeds with its route towards the target. However, if obstacles are present we also need to check the sides by launching 2 other rays which's info might
-    //be useful for later.
+    // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required and the enemy proceeds with its route towards the target. However, if obstacles 
+    //are present we also need to check the sides by launching 2 other rays which's info might be useful for later.
     private void LookForObstacles ()
     {
-        bool clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false &&
+        clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false &&
             Physics.Linecast (raycastOrigins[1].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false;
-
         if (clearToTarget == true)
         {
             frontObsR = false;
@@ -450,7 +489,7 @@ public class EnemyChaney : MonoBehaviour
             sideObsR = false;
             sideObsL = false;
             closeObstacle = false;
-            deviation = 0;
+            //deviation = 0;
         }
         else
         {
@@ -482,7 +521,8 @@ public class EnemyChaney : MonoBehaviour
         deviation = Mathf.Clamp (deviation, -270, +270);
     }
 
-    IEnumerator StopTime()
+
+    IEnumerator StopTime ()
     {
         yield return new WaitForSeconds(1.5f);
 
