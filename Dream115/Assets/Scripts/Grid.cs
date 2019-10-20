@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    public Transform player;
+    public bool displayGridGizmos;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
     public float nodeRadius;
@@ -14,7 +13,7 @@ public class Grid : MonoBehaviour
     float nodeDiameter;
     int gridSizex, gridSizey;
 
-    void Start()
+    void Awake()
     {
         nodeDiameter = nodeRadius * 2;
         gridSizex = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
@@ -22,7 +21,15 @@ public class Grid : MonoBehaviour
         CreateGrid();
     }
 
-    private void CreateGrid()//crea la rejilla inicial e indica por que parte se puede caminar
+    public int MaxSize
+    {
+        get
+        {
+            return gridSizex * gridSizey;
+        }
+    }
+
+    void CreateGrid()//crea la rejilla inicial e indica por que parte se puede caminar
     {
         grid = new Node[gridSizex, gridSizey];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
@@ -33,7 +40,7 @@ public class Grid : MonoBehaviour
             {
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward*(y*nodeDiameter+nodeRadius);
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius,unwalkableMask));
-                grid[x, y] = new Node(walkable, worldPoint, x, y);
+                grid[x,y] = new Node(walkable, worldPoint, x, y);
             }
         }
     }
@@ -72,24 +79,20 @@ public class Grid : MonoBehaviour
 
         int x = Mathf.RoundToInt((gridSizex - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizey - 1) * percentY);
-        return grid[x, y];
+        return grid[x,y];
     }
 
-    private void OnDrawGizmos()
+    void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
-        if(grid != null)
+        if(grid != null && displayGridGizmos)
         {
-            Node playerNode = NodeFromWorldPoint(player.position);
             foreach( Node n in grid)
             {
                 Gizmos.color = (n.walkable) ? Color.white : Color.red;
-                if(playerNode == n)
-                {
-                    Gizmos.color = Color.cyan;
-                }
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+                
             }
         }
     }
