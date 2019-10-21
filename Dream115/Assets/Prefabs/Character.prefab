@@ -735,6 +735,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6554515646694090810}
     m_Modifications:
+    - target: {fileID: -927199367670048503, guid: f86964758db024b41ad09a6300903ead,
+        type: 3}
+      propertyPath: m_Name
+      value: RobertoNormal
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f86964758db024b41ad09a6300903ead,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -790,11 +795,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: f86964758db024b41ad09a6300903ead,
-        type: 3}
-      propertyPath: m_Name
-      value: RobertoNormal
-      objectReference: {fileID: 0}
     - target: {fileID: -6057140222963153312, guid: f86964758db024b41ad09a6300903ead,
         type: 3}
       propertyPath: m_Controller
@@ -821,6 +821,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6554515646694090810}
     m_Modifications:
+    - target: {fileID: -927199367670048503, guid: 3940761a8c18894498ef3fe4ffe42891,
+        type: 3}
+      propertyPath: m_Name
+      value: RobertoInvisible
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 3940761a8c18894498ef3fe4ffe42891,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -875,11 +880,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -927199367670048503, guid: 3940761a8c18894498ef3fe4ffe42891,
-        type: 3}
-      propertyPath: m_Name
-      value: RobertoInvisible
       objectReference: {fileID: 0}
     - target: {fileID: -6057140222963153312, guid: 3940761a8c18894498ef3fe4ffe42891,
         type: 3}
