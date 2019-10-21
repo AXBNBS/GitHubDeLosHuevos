@@ -8,51 +8,67 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     public Transform target;
-    float speed = 5;
-    Vector3[] path;
-    int targetIndex;
+
+    [SerializeField] private float speed;
+    private Vector3[] path;
+    private int targetIndex;
 
 
-    public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+    private void Update ()
     {
-        if (pathSuccessful)
+        if (target == null)
+        {
+            StopCoroutine ("FollowPath");
+        }
+        else 
+        {
+            PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+        }
+        /*if (target != null) 
+        {
+            PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+        }*/
+    }
+
+
+    public void OnPathFound (Vector3[] newPath, bool pathSuccessful)
+    {
+        if (pathSuccessful == true)
         {
             path = newPath;
             targetIndex = 0;
-            StopCoroutine("FollowPath");
-            StartCoroutine("FollowPath");
+
+            StopCoroutine ("FollowPath");
+            StartCoroutine ("FollowPath");
         }
     }
 
 
-    private void Update()
+    IEnumerator FollowPath ()
     {
-        if (target != null)
+        if (path != null && path.Length > 0) 
         {
-            PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-        }
-    }
+            Vector3 currentWaypoint = path[0];
 
-
-    IEnumerator FollowPath()
-    {
-        Vector3 currentWaypoint = path[0];
-
-        while (true)
-        {
-            if (transform.position == currentWaypoint)
+            while (true)
             {
-                targetIndex++;
-                if (targetIndex >= path.Length)
+                if (this.transform.position == currentWaypoint)
                 {
-                    yield break;
-                }
-                currentWaypoint = path[targetIndex];
-            }
+                    targetIndex += 1;
 
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-            print(currentWaypoint);
-            yield return null;
+                    if (targetIndex >= path.Length)
+                    {
+                        //StopCoroutine ("FollowPath");
+                        yield break;
+                    }
+
+                    currentWaypoint = path[targetIndex];
+                }
+                transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
+
+                print(currentWaypoint);
+                yield return null;
+            }
         }
     }
 }

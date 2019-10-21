@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
     private SpriteRenderer[] minimapIcons;
-    private Unit unit;
+    public Unit unit;
 
 
     // Start is called before the first frame update
@@ -355,11 +355,14 @@ public class Enemy : MonoBehaviour
                 enemy.actualState = state.CHASE;
                 enemy.target = player;
             }
+
             if (shooterEnemy && Vector3.Distance (transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
                 animator.SetTrigger ("Shoot");
+
                 nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
-                Fire(); //Dispara
+                
+                Fire (); //Dispara
             }
 
             if (Vector3.Distance (transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
@@ -382,7 +385,6 @@ public class Enemy : MonoBehaviour
         else if (actualState == state.ALERT)
         {
             light.color = Color.yellow;
-            unit.target = target;
 
             if (Vector3.Distance (transform.position, target.position) < colliderLimit)
             {
@@ -421,7 +423,7 @@ public class Enemy : MonoBehaviour
         if (this.actualState == state.PATROL)
         {
             float distance = Vector3.Distance (this.transform.position, target.transform.position);
-            print(distance);
+            //print(distance);
 
             if (distance <= 5)
             {
@@ -485,12 +487,14 @@ public class Enemy : MonoBehaviour
 
         actualState = state.ALERT;
         target = position;
+        unit.target = target;
         foreach (Enemy enemy in enemies)
         {
             if (Vector3.Distance (transform.position, enemy.transform.position) < 10)
             {
                 enemy.actualState = state.ALERT;
                 enemy.target = position;
+                enemy.unit.target = enemy.target;
             }
         }
     }
