@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
 
 public class Unit : MonoBehaviour
 {
@@ -9,10 +12,6 @@ public class Unit : MonoBehaviour
     Vector3[] path;
     int targetIndex;
 
-    void Start()
-    {
-       PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
-    }
 
     public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
     {
@@ -25,10 +24,15 @@ public class Unit : MonoBehaviour
         }
     }
 
+
     private void Update()
     {
-        PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+        if (target != null)
+        {
+            PathRequestManager.RequestPath(transform.position, target.position, OnPathFound);
+        }
     }
+
 
     IEnumerator FollowPath()
     {
@@ -36,10 +40,10 @@ public class Unit : MonoBehaviour
 
         while (true)
         {
-            if(transform.position == currentWaypoint)
+            if (transform.position == currentWaypoint)
             {
                 targetIndex++;
-                if(targetIndex >= path.Length)
+                if (targetIndex >= path.Length)
                 {
                     yield break;
                 }

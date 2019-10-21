@@ -155,6 +155,8 @@ Transform:
   - {fileID: 101006980193350542}
   - {fileID: 5159356101297927147}
   - {fileID: 4320355199872342278}
+  - {fileID: 3913041819718715085}
+  - {fileID: 221282484488029469}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -170,10 +172,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74d46500cb9a15a4fb0b19ab5f09e58f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalMoveSpd: 0
-  slowMoveSpd: 0
-  normalTurnSpd: 0
-  fastTurnSpd: 0
+  normalMoveSpd: 3
+  slowMoveSpd: 2
+  normalTurnSpd: 3
+  fastTurnSpd: 4
   target: {fileID: 0}
   shooterEnemy: 0
   beltranoide: 0
@@ -191,15 +193,15 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   backToPatrol: 0
-  frontRaysDst: 0
-  sideRaysDst: 0
-  dodgeAngle: 0
+  frontRaysDst: 15
+  sideRaysDst: 7
+  dodgeAngle: 40
   deviation: 0
   currentNoObsItr: 0
-  targetNoObsItr: 0
-  currentYesObsItr: 0
-  targetYesObsItr: 0
-  raycastOrigins: []
+  targetNoObsItr: 30
+  raycastOrigins:
+  - {fileID: 3913041819718715085}
+  - {fileID: 221282484488029469}
   sideObsR: 0
   sideObsL: 0
   frontObsR: 0
@@ -220,6 +222,50 @@ CapsuleCollider:
   m_Height: 2.0090036
   m_Direction: 1
   m_Center: {x: 0, y: 1.3358688, z: 0}
+--- !u!1 &1961611965562931506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3913041819718715085}
+  - component: {fileID: 3263027453703703775}
+  m_Layer: 0
+  m_Name: RaycastOriginRight
+  m_TagString: RaycastOrigin
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3913041819718715085
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961611965562931506}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 1.85, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 101006981010207944}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3263027453703703775
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961611965562931506}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5039019499322755232
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,6 +426,50 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &8242161851503812063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 221282484488029469}
+  - component: {fileID: 2934289232254703535}
+  m_Layer: 0
+  m_Name: RaycastOriginLeft
+  m_TagString: RaycastOrigin
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &221282484488029469
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242161851503812063}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: 1.85, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 101006981010207944}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2934289232254703535
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242161851503812063}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &101006981366186289
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -13,9 +13,9 @@ public class Enemy : MonoBehaviour
     public Transform target;
     Transform auxTarget;
 
-    enum state { PATROL, ALERT, CHASE }; // Control de estados para cuando persiga al personaje
+    public enum state { PATROL, ALERT, CHASE }; // Control de estados para cuando persiga al personaje
 
-    state actualState;
+    public state actualState;
 
     float viewRadius;
     float viewAngle;
@@ -53,6 +53,7 @@ public class Enemy : MonoBehaviour
     private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
     private SpriteRenderer[] minimapIcons;
+    private Unit unit;
 
 
     // Start is called before the first frame update
@@ -84,7 +85,7 @@ public class Enemy : MonoBehaviour
                 index += 1;
             }
         }
-        backToPatrol = true;
+        backToPatrol = false;
         sideObsR = false;
         sideObsL = false;
         frontObsR = false;
@@ -93,6 +94,7 @@ public class Enemy : MonoBehaviour
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 2;
         deviation = 0;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
+        unit = this.gameObject.GetComponent<Unit> ();
     }
 
 
@@ -103,20 +105,18 @@ public class Enemy : MonoBehaviour
         FollowRoute ();
         Move ();
 
-        if (frontObsR == false && frontObsL == false)
+        /*if (frontObsR == false && frontObsL == false)
         {
             currentNoObsItr += 1;
-            //currentYesObsItr = 0;
         }
         else 
         {
             currentNoObsItr = 0;
-            //currentYesObsItr += 1;
         }
         if (currentNoObsItr >= targetNoObsItr) 
         {
             deviation = 0;
-        }
+        }*/
         if (actualState == state.CHASE)
         {
             minimapIcons[0].enabled = false;
@@ -168,21 +168,33 @@ public class Enemy : MonoBehaviour
 
     private void Move ()
     {
-        // The enemy's speed will be drastically reduced if it's close to an obstacle.
-        if (closeObstacle == false)
+        if (actualState == state.PATROL) 
         {
-            transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
+            if (backToPatrol == false) 
+            {
+                transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
+            }
+            else 
+            {
+                unit.target = auxTarget;
+            }
         }
+        
+        // The enemy's speed will be drastically reduced if it's close to an obstacle.
+        //if (closeObstacle == false)
+        //{
+
+        /*}
         else
         {
             transform.Translate (new Vector3 (0, 0, slowMoveSpd * Time.deltaTime));
-        }
+        }*/
         //this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
-        
+
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
 
-        if (actualState != state.PATROL || backToPatrol == true)
+        /*if (actualState != state.PATROL || backToPatrol == true)
         {
             LookForObstacles ();
 
@@ -318,24 +330,24 @@ public class Enemy : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
       
         Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y + deviation, this.transform.rotation.eulerAngles.z);
 
         // The enemy will rotate faster if it's close to an obstacle, in order to avoid clipping throught it.
-        if (closeObstacle == true)
+        /*if (closeObstacle == true)
         {
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, fastTurnSpd * Time.deltaTime);
         }
         else
-        {
+        {*/
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
-        }
+        //}
 
         if (actualState == state.CHASE)
         {
             light.color = Color.red;
-            actualState = state.CHASE;
+            //actualState = state.CHASE;
             target = player;
             foreach (Enemy enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
@@ -345,28 +357,32 @@ public class Enemy : MonoBehaviour
             }
             if (shooterEnemy && Vector3.Distance (transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
             {
-                animator.SetTrigger("Shoot");
+                animator.SetTrigger ("Shoot");
                 nextFire = Time.time + fireRate; //Hace que no ejecute otro disparo hasta pasado un tiempo
                 Fire(); //Dispara
             }
 
             if (Vector3.Distance (transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
             {
-                animator.SetFloat("Speed", 0f);//Para de andar
+                animator.SetFloat ("Speed", 0f);//Para de andar
+
+                unit.target = null;
                 normalMoveSpd = 0;//
             }
             else
             {
-                animator.SetFloat("Speed", 12f);//Sigue persiguiendo al personaje
+                animator.SetFloat ("Speed", 12f);//Sigue persiguiendo al personaje
+
+                unit.target = target;
                 normalMoveSpd = 5.0f;
                 if (beltranoide) //Si es un beltranoide
                     normalMoveSpd *= 2.5f; //Te persigue a mayor velocidad
             }
         }
-
         else if (actualState == state.ALERT)
         {
             light.color = Color.yellow;
+            unit.target = target;
 
             if (Vector3.Distance (transform.position, target.position) < colliderLimit)
             {
@@ -390,7 +406,11 @@ public class Enemy : MonoBehaviour
         {
             light.color = Color.blue;
             target = auxTarget;
-            animator.SetFloat("Speed", 1f);
+            if (backToPatrol == false) 
+            {
+                unit.target = null;
+            }
+            animator.SetFloat ("Speed", 1f);
             normalMoveSpd = 5.0f;
         }
     }
@@ -400,7 +420,10 @@ public class Enemy : MonoBehaviour
     {
         if (this.actualState == state.PATROL)
         {
-            if (Vector3.Distance (this.transform.position, target.transform.position) <= 1)
+            float distance = Vector3.Distance (this.transform.position, target.transform.position);
+            print(distance);
+
+            if (distance <= 5)
             {
                 backToPatrol = false;
                 target = target.gameObject.GetComponent<Waypoint>().nextPoint;
@@ -473,7 +496,7 @@ public class Enemy : MonoBehaviour
     }
 
 
-    // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required and the enemy proceeds with its route towards the target. However, if obstacles 
+    /* First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required and the enemy proceeds with its route towards the target. However, if obstacles 
     //are present we also need to check the sides by launching 2 other rays which's info might be useful for later.
     private void LookForObstacles ()
     {
@@ -497,13 +520,13 @@ public class Enemy : MonoBehaviour
             /*frontObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].forward, out frontObsRInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
             frontObsL = Physics.Raycast (raycastOrigins[1].position, raycastOrigins[1].forward, out frontObsLInfo, frontRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
             sideObsR = Physics.Raycast (raycastOrigins[0].position, raycastOrigins[0].right, out sideObsRInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
-            sideObsL = Physics.Raycast (raycastOrigins[1].position, -raycastOrigins[1].right, out sideObsLInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);*/
+            sideObsL = Physics.Raycast (raycastOrigins[1].position, -raycastOrigins[1].right, out sideObsLInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
             closeObstacle = (frontObsR == true && frontObsRInfo.distance < frontRaysDst / 5) || (frontObsL == true && frontObsLInfo.distance < frontRaysDst / 5);
         }
-    }
+    }*/
 
 
-    // We change the value of the deviation we'll add to the rotation of the enemy, we'll also reset the deviation value to 0 if the rotation direction changes suddenly.
+    /* We change the value of the deviation we'll add to the rotation of the enemy, we'll also reset the deviation value to 0 if the rotation direction changes suddenly.
     private void ChangeDeviation (bool add)
     {
         if ((Mathf.Sign (deviation) == +1 && add == false) || Mathf.Sign (deviation) == -1 && add == true)
@@ -520,5 +543,5 @@ public class Enemy : MonoBehaviour
         }
 
         deviation = Mathf.Clamp (deviation, -270, +270);
-    }
+    }*/
 }
