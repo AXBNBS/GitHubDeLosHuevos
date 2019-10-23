@@ -12,22 +12,52 @@ public class Unit : MonoBehaviour
     [SerializeField] private float speed;
     private Vector3[] path;
     private int targetIndex;
+    private Enemy enemy;
+    private float colliderLimit;
+
+
+    private void Start ()
+    {
+        enemy = this.gameObject.GetComponent<Enemy> ();
+        colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
+        //InvokeRepeating ("GetPath", 0, 1);
+    }
 
 
     private void Update ()
     {
-        if (target == null)
+        if (IsInvoking ("GetPath") == false && enemy.actualState == Enemy.state.CHASE && Vector3.Distance (this.transform.position, target.position) >= colliderLimit) 
+        {
+            InvokeRepeating ("GetPath", 0, 1);
+        }
+        //print(IsInvoking("GetPath"));
+        /*if (target == null)
         {
             StopCoroutine ("FollowPath");
         }
         else 
         {
             PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
-        }
+        }*/
         /*if (target != null) 
         {
             PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
         }*/
+    }
+
+
+    public void GetPath () 
+    {
+        if (enemy.actualState != Enemy.state.CHASE || Vector3.Distance (this.transform.position, target.position) < colliderLimit)
+        {
+            CancelInvoke ("GetPath");
+        }
+
+        PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+        //if (target != null) 
+        //{
+            
+        //}
     }
 
 
@@ -66,7 +96,7 @@ public class Unit : MonoBehaviour
                 }
                 transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
 
-                print(currentWaypoint);
+                //print(currentWaypoint);
                 yield return null;
             }
         }

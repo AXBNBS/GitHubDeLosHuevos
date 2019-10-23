@@ -69,6 +69,7 @@ public class Enemy : MonoBehaviour
         viewRadiusShoot = viewRadius / 1.5f; //Distancia donde dispararía el enemigo
 
         light = light.GetComponent<Light> ();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         auxTarget = target;
         animator = this.GetComponentInChildren<Animator> ();
         currentNoObsItr = 0;
@@ -91,7 +92,7 @@ public class Enemy : MonoBehaviour
         frontObsR = false;
         frontObsL = false;
         closeObstacle = false;
-        colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 2;
+        colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
         deviation = 0;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
         unit = this.gameObject.GetComponent<Unit> ();
@@ -168,16 +169,17 @@ public class Enemy : MonoBehaviour
 
     private void Move ()
     {
-        if (actualState == state.PATROL) 
+        if (actualState == state.PATROL && backToPatrol == false) 
         {
-            if (backToPatrol == false) 
-            {
-                transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
-            }
+            //if (backToPatrol == false) 
+            //{
+            print("hey");
+            this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
+            /*}
             else 
             {
                 unit.target = auxTarget;
-            }
+            }*/
         }
         
         // The enemy's speed will be drastically reduced if it's close to an obstacle.
@@ -353,6 +355,7 @@ public class Enemy : MonoBehaviour
             {
                 enemy.light.color = Color.red;
                 enemy.actualState = state.CHASE;
+                enemy.backToPatrol = false;
                 enemy.target = player;
             }
 
@@ -365,18 +368,18 @@ public class Enemy : MonoBehaviour
                 Fire (); //Dispara
             }
 
-            if (Vector3.Distance (transform.position, target.position) < stoppingDistance)//Comprueba si esta lo suficientemente cerca del personaje para parar
+            if (Vector3.Distance (transform.position, target.position) < colliderLimit)//Comprueba si esta lo suficientemente cerca del personaje para parar
             {
                 animator.SetFloat ("Speed", 0f);//Para de andar
 
-                unit.target = null;
+                //unit.target = null;
                 normalMoveSpd = 0;//
             }
             else
             {
                 animator.SetFloat ("Speed", 12f);//Sigue persiguiendo al personaje
 
-                unit.target = target;
+                //unit.target = target;
                 normalMoveSpd = 5.0f;
                 if (beltranoide) //Si es un beltranoide
                     normalMoveSpd *= 2.5f; //Te persigue a mayor velocidad
@@ -386,20 +389,22 @@ public class Enemy : MonoBehaviour
         {
             light.color = Color.yellow;
 
-            if (Vector3.Distance (transform.position, target.position) < colliderLimit)
+            if (Vector3.Distance (transform.position, target.position) < colliderLimit * 2)
             {
                 Destroy (target.gameObject);
 
-                actualState = state.PATROL;
+                PatrolAgain ();
+                /*actualState = state.PATROL;
                 backToPatrol = true;
-                target = auxTarget;
+                target = auxTarget;*/
                 foreach (Enemy enemy in enemies)
                 {
                     if (enemy.actualState != state.PATROL)
                     {
-                        enemy.actualState = state.PATROL;
+                        enemy.PatrolAgain ();
+                        /*enemy.actualState = state.PATROL;
                         enemy.backToPatrol = true;
-                        enemy.target = enemy.auxTarget;
+                        enemy.target = enemy.auxTarget;*/
                     }
                 }
             }
@@ -408,10 +413,10 @@ public class Enemy : MonoBehaviour
         {
             light.color = Color.blue;
             target = auxTarget;
-            if (backToPatrol == false) 
+            /*if (backToPatrol == false) 
             {
                 unit.target = null;
-            }
+            }*/
             animator.SetFloat ("Speed", 1f);
             normalMoveSpd = 5.0f;
         }
@@ -423,11 +428,12 @@ public class Enemy : MonoBehaviour
         if (this.actualState == state.PATROL)
         {
             float distance = Vector3.Distance (this.transform.position, target.transform.position);
-            //print(distance);
+            print(distance);
 
-            if (distance <= 5)
+            if (distance < colliderLimit * 2)
             {
                 backToPatrol = false;
+                unit.target = null;
                 target = target.gameObject.GetComponent<Waypoint>().nextPoint;
                 auxTarget = target;
             }
@@ -460,14 +466,17 @@ public class Enemy : MonoBehaviour
                 if (!Physics.Raycast (transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
                 {
                     actualState = state.CHASE; //Si ve al personaje pasa a estado de persecucion
+                    backToPatrol = false;
+
                     return;
                 }
             }
         }
         if (actualState == state.CHASE)
         {
-            actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
-            backToPatrol = true;
+            PatrolAgain ();
+            //actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
+            //backToPatrol = true;
         }
     }
 
@@ -486,15 +495,22 @@ public class Enemy : MonoBehaviour
         }
 
         actualState = state.ALERT;
+        backToPatrol = false;
         target = position;
         unit.target = target;
+
+        unit.GetPath ();
+
         foreach (Enemy enemy in enemies)
         {
             if (Vector3.Distance (transform.position, enemy.transform.position) < 10)
             {
                 enemy.actualState = state.ALERT;
+                enemy.backToPatrol = false;
                 enemy.target = position;
                 enemy.unit.target = enemy.target;
+
+                enemy.unit.GetPath ();
             }
         }
     }
@@ -548,4 +564,16 @@ public class Enemy : MonoBehaviour
 
         deviation = Mathf.Clamp (deviation, -270, +270);
     }*/
+
+
+    // 
+    public void PatrolAgain () 
+    {
+        backToPatrol = true;
+        actualState = state.PATROL;
+        target = auxTarget;
+        unit.target = target;
+
+        unit.GetPath ();
+    }
 }
