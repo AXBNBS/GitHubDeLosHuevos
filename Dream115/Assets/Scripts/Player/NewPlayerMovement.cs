@@ -35,7 +35,7 @@ public class NewPlayerMovement : MonoBehaviour
         movement = Vector3.zero;
         characterCtr = this.GetComponent<CharacterController> ();
         animators = this.GetComponentsInChildren<Animator> ();
-        playerLife = this.GetComponent<PlayerLife>();
+        playerLife = this.GetComponent<PlayerLife> ();
         audioSrc = this.GetComponent<AudioSource> ();
     }
 

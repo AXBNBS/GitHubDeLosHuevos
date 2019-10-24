@@ -428,7 +428,7 @@ public class Enemy : MonoBehaviour
         if (this.actualState == state.PATROL)
         {
             float distance = Vector3.Distance (this.transform.position, target.transform.position);
-            print(distance);
+            //print(distance);
 
             if (distance < colliderLimit * 2)
             {
@@ -453,19 +453,20 @@ public class Enemy : MonoBehaviour
 
     private void FindVisibleTargets ()
     {
-        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+        Collider[] targetsInViewRadius = Physics.OverlapSphere (transform.position, viewRadius, targetMask);
 
-        for (int i = 0; i < targetsInViewRadius.Length; i++)
+        for (int i = 0; i < targetsInViewRadius.Length; i += 1)
         {
             Transform target = targetsInViewRadius[i].transform;
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
+            if (Vector3.Angle (transform.forward, dirToTarget) < viewAngle / 2)
             {
                 float distToTarget = Vector3.Distance (transform.position, target.position);
 
-                if (!Physics.Raycast (transform.position, dirToTarget, distToTarget, obstacleMask) && !PlayerStats.Instance.playerInvisible) //Si no es invisible 
+                if (PlayerStats.Instance.playerInvisible == false && Physics.Raycast (transform.position, dirToTarget, distToTarget, obstacleMask) == false) //Si no es invisible y no encontramos obstáculos por el medio.
                 {
-                    actualState = state.CHASE; //Si ve al personaje pasa a estado de persecucion
+                    actualState = state.CHASE; //Si ve al personaje pasa a estado de persecución.
+                    unit.target = player;
                     backToPatrol = false;
 
                     return;
@@ -566,7 +567,7 @@ public class Enemy : MonoBehaviour
     }*/
 
 
-    // 
+    // The enemy goes back to the point it was patrolling to, and we make sure it finds a path to it.
     public void PatrolAgain () 
     {
         backToPatrol = true;

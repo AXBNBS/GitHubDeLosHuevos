@@ -50,7 +50,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   gridWorldSize: {x: 256, y: 176}
-  nodeRadius: 1
+  nodeRadius: 0.5
 --- !u!114 &1432614351907107650
 MonoBehaviour:
   m_ObjectHideFlags: 0

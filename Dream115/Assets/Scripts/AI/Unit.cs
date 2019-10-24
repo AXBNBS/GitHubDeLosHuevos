@@ -76,6 +76,7 @@ public class Unit : MonoBehaviour
 
     IEnumerator FollowPath ()
     {
+        print("wenas");
         if (path != null && path.Length > 0) 
         {
             Vector3 currentWaypoint = path[0];

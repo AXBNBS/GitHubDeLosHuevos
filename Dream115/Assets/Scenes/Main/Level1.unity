@@ -1239,11 +1239,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 65577006}
-  - component: {fileID: 65577009}
-  - component: {fileID: 65577008}
   - component: {fileID: 65577007}
   m_Layer: 9
-  m_Name: Cube (16)
+  m_Name: BarraSala1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1274,54 +1272,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &65577008
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 65577005}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &65577009
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 65577005}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Size: {x: 0.9999999, y: 0.46886086, z: 1}
+  m_Center: {x: 0, y: -0.26556948, z: 0}
 --- !u!1001 &71940748
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3244,22 +3196,22 @@ PrefabInstance:
     - target: {fileID: 1432614351907107651, guid: eefe49c361a001048b2d739373c14030,
         type: 3}
       propertyPath: displayGridGizmos
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1432614351907107651, guid: eefe49c361a001048b2d739373c14030,
         type: 3}
       propertyPath: gridWorldSize.x
-      value: 256
+      value: 210
       objectReference: {fileID: 0}
     - target: {fileID: 1432614351907107651, guid: eefe49c361a001048b2d739373c14030,
         type: 3}
       propertyPath: gridWorldSize.y
-      value: 176
+      value: 165
       objectReference: {fileID: 0}
     - target: {fileID: 1432614351907107651, guid: eefe49c361a001048b2d739373c14030,
         type: 3}
       propertyPath: nodeRadius
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eefe49c361a001048b2d739373c14030, type: 3}
