@@ -30,6 +30,13 @@ public class Unit : MonoBehaviour
         {
             InvokeRepeating ("GetPath", 0, 1);
         }
+
+        if (enemy.actualState == Enemy.state.PATROL && enemy.backToPatrol == false) 
+        {
+            StopAllCoroutines ();
+
+            CancelInvoke ("GetPath");
+        }
         //print(IsInvoking("GetPath"));
         /*if (target == null)
         {
@@ -48,21 +55,19 @@ public class Unit : MonoBehaviour
 
     public void GetPath () 
     {
-        if (enemy.actualState != Enemy.state.CHASE || Vector3.Distance (this.transform.position, target.position) < colliderLimit)
+        PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+        //print("vamos venga");
+
+        if (IsInvoking ("GetPath") == true && (enemy.actualState != Enemy.state.CHASE || Vector3.Distance (this.transform.position, target.position) < colliderLimit))
         {
             CancelInvoke ("GetPath");
         }
-
-        PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
-        //if (target != null) 
-        //{
-            
-        //}
     }
 
 
     public void OnPathFound (Vector3[] newPath, bool pathSuccessful)
     {
+        //print("owo");
         if (pathSuccessful == true)
         {
             path = newPath;
@@ -76,7 +81,7 @@ public class Unit : MonoBehaviour
 
     IEnumerator FollowPath ()
     {
-        print("wenas");
+        //print("wenas");
         if (path != null && path.Length > 0) 
         {
             Vector3 currentWaypoint = path[0];
@@ -89,7 +94,7 @@ public class Unit : MonoBehaviour
 
                     if (targetIndex >= path.Length)
                     {
-                        //StopCoroutine ("FollowPath");
+                        //print("yasta");
                         yield break;
                     }
 

@@ -46,14 +46,14 @@ public class Enemy : MonoBehaviour
     float stoppingDistance = 3.0f;
 
     public bool backToPatrol;
+    public Unit unit;
 
-    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
-    [SerializeField] private Transform[] raycastOrigins;
-    [SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
-    private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
+    //[SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
+    //[SerializeField] private Transform[] raycastOrigins;
+    //[SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
+    //private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
     private SpriteRenderer[] minimapIcons;
-    public Unit unit;
 
 
     // Start is called before the first frame update
@@ -72,10 +72,10 @@ public class Enemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         auxTarget = target;
         animator = this.GetComponentInChildren<Animator> ();
-        currentNoObsItr = 0;
-        raycastOrigins = new Transform[2];
+        //currentNoObsItr = 0;
+        //raycastOrigins = new Transform[2];
 
-        BoxCollider[] children = this.GetComponentsInChildren<BoxCollider> ();
+        /*BoxCollider[] children = this.GetComponentsInChildren<BoxCollider> ();
         int index = 0;
 
         foreach (BoxCollider t in children)
@@ -85,15 +85,15 @@ public class Enemy : MonoBehaviour
                 raycastOrigins[index] = t.transform;
                 index += 1;
             }
-        }
+        }*/
         backToPatrol = false;
-        sideObsR = false;
+        /*sideObsR = false;
         sideObsL = false;
         frontObsR = false;
         frontObsL = false;
-        closeObstacle = false;
+        closeObstacle = false;*/
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
-        deviation = 0;
+        //deviation = 0;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
         unit = this.gameObject.GetComponent<Unit> ();
     }
@@ -146,20 +146,7 @@ public class Enemy : MonoBehaviour
         // Rays that represent the raycasts launched from the enemy's shoulders onwards.
         Gizmos.color = Color.yellow;
 
-        /*Gizmos.DrawLine (raycastOrigins[0].position, raycastOrigins[0].forward * frontRaysDst);
-        Gizmos.DrawLine (raycastOrigins[1].position, raycastOrigins[1].forward * frontRaysDst);
-        Gizmos.DrawLine (raycastOrigins[0].position, raycastOrigins[0].right * sideRaysDst);
-        Gizmos.DrawLine (raycastOrigins[1].position, -raycastOrigins[1].right * sideRaysDst);*/
-        Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].forward * frontRaysDst);
-        Gizmos.DrawRay (raycastOrigins[1].position, raycastOrigins[1].forward * frontRaysDst);
-        Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].right * sideRaysDst);
-        Gizmos.DrawRay (raycastOrigins[1].position, -raycastOrigins[1].right * sideRaysDst);
-
-        // Line that represent the linecasts that go from the enemy's shoulder's to the targed in order to check that the path is clear.
-        Gizmos.color = Color.black;
-
-        Gizmos.DrawLine (raycastOrigins[0].position, target.position);
-        Gizmos.DrawLine (raycastOrigins[1].position, target.position);
+        Gizmos.DrawLine (this.transform.position, this.transform.position + this.transform.forward.normalized * 10);
 
         Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
 
@@ -173,7 +160,7 @@ public class Enemy : MonoBehaviour
         {
             //if (backToPatrol == false) 
             //{
-            print("hey");
+            //print("hey");
             this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
             /*}
             else 
@@ -334,7 +321,7 @@ public class Enemy : MonoBehaviour
             }
         }*/
       
-        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y + deviation, this.transform.rotation.eulerAngles.z);
+        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
 
         // The enemy will rotate faster if it's close to an obstacle, in order to avoid clipping throught it.
         /*if (closeObstacle == true)
@@ -469,13 +456,15 @@ public class Enemy : MonoBehaviour
                     unit.target = player;
                     backToPatrol = false;
 
+                    StopAllCoroutines ();
+
                     return;
                 }
             }
         }
         if (actualState == state.CHASE)
         {
-            PatrolAgain ();
+            StartCoroutine ("KeepFollow");
             //actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
             //backToPatrol = true;
         }
@@ -570,11 +559,30 @@ public class Enemy : MonoBehaviour
     // The enemy goes back to the point it was patrolling to, and we make sure it finds a path to it.
     public void PatrolAgain () 
     {
+        StopAllCoroutines ();
+        
+        RaycastHit hit;
+
+        print(":)");
         backToPatrol = true;
         actualState = state.PATROL;
         target = auxTarget;
         unit.target = target;
+        //if (Physics.Raycast (this.transform.position, this.transform.forward, colliderLimit * 2, obstacleMask) == true) 
+        if (Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward.normalized * 10, out hit, obstacleMask) == true)
+        {
+            print(":/");
+            this.transform.Translate (-hit.normal);
+        }
 
         unit.GetPath ();
+    }
+
+
+    IEnumerator KeepFollow ()
+    {
+        yield return new WaitForSeconds (5);
+
+        PatrolAgain ();
     }
 }
