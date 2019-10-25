@@ -11,6 +11,7 @@ public class NewPlayerMovement : MonoBehaviour
     public GameObject claim;
 
     [SerializeField] private AudioClip clapClp;
+    [SerializeField] private int clapRad;
     private int walkSpd, runSpd, rotationSpd, gravity;
     private float inputH, inputV;
     private Vector3 movement;
@@ -117,7 +118,7 @@ public class NewPlayerMovement : MonoBehaviour
     private void OnDrawGizmos ()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere (transform.position, 200);
+        Gizmos.DrawWireSphere (transform.position, clapRad);
     }
 
 
@@ -158,7 +159,7 @@ public class NewPlayerMovement : MonoBehaviour
 
     private void CallEnemies ()
     {
-        Collider[] enemiesinArea = Physics.OverlapSphere(transform.position, 200);
+        Collider[] enemiesinArea = Physics.OverlapSphere(transform.position, clapRad);
 
         for (int i = 0; i < enemiesinArea.Length; i++)
         {
