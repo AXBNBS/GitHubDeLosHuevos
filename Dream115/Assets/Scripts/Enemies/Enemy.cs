@@ -54,12 +54,13 @@ public class Enemy : MonoBehaviour
     //private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
     private SpriteRenderer[] minimapIcons;
+    private bool uniqueWpt;
 
 
     // Start is called before the first frame update
     private void Start ()
     {
-        //this.transform.position = target.position;
+        this.transform.position = target.position;
         actualState = state.PATROL;
 
         transform.LookAt (new Vector3 (target.position.x, transform.position.y, target.position.z));
@@ -105,6 +106,7 @@ public class Enemy : MonoBehaviour
         //deviation = 0;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
         unit = this.gameObject.GetComponent<Unit> ();
+        uniqueWpt = target.GetComponent<Waypoint>().nextPoint == null;
     }
 
 
@@ -167,17 +169,22 @@ public class Enemy : MonoBehaviour
     {
         if (actualState == state.PATROL && backToPatrol == false) 
         {
-            //if (backToPatrol == false) 
-            //{
-            //print("hey");
-            this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
-            /*}
-            else 
+            /*float distanceWpt = Vector3.Distance (this.transform.position, target.position);
+
+            if (distanceWpt >= 1) 
+            {*/
+                this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
+            //}
+
+            /*if (uniqueWpt == true && distanceWpt < 1)
             {
-                unit.target = auxTarget;
-            }*/
+                this.transform.rotation = Quaternion.Slerp (this.transform.rotation, target.rotation, normalTurnSpd * Time.deltaTime);
+            }
+            else
+            {*/
+            //}
         }
-        
+
         // The enemy's speed will be drastically reduced if it's close to an obstacle.
         //if (closeObstacle == false)
         //{
@@ -189,148 +196,9 @@ public class Enemy : MonoBehaviour
         }*/
         //this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
 
-        Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+        /*Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
-
-        /*if (actualState != state.PATROL || backToPatrol == true)
-        {
-            LookForObstacles ();
-
-            if (closeObstacle == true)
-            {
-                if (frontObsL == frontObsR)
-                {
-                    if (frontObsLInfo.distance < frontObsRInfo.distance)
-                    {
-                        this.transform.Translate (frontObsLInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
-
-                        //targetRotation.y += Vector3.Angle (this.transform.right, frontObsLInfo.normal);
-                    }
-                    else
-                    {
-                        this.transform.Translate (frontObsRInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
-
-                        //targetRotation.y -= Vector3.Angle (-this.transform.right, frontObsRInfo.normal);
-                    }
-                }
-                else
-                {
-                    if (frontObsL == true)
-                    {
-                        this.transform.Translate (frontObsLInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
-
-                        //targetRotation.y += Vector3.Angle (this.transform.right, frontObsLInfo.normal);
-                    }
-                    else
-                    {
-                        this.transform.Translate (frontObsRInfo.normal * 2 * normalMoveSpd * Time.deltaTime, Space.World);
-
-                        //targetRotation.y -= Vector3.Angle (-this.transform.right, frontObsRInfo.normal);
-                    }
-                }
-            }
-
-            if (sideObsL == true && sideObsR == true && frontObsL == true && frontObsR == true)
-            {
-                // If the enemy is not able to see a clear path ahead or at its sides, it will go back.
-                deviation = 0;
-                targetRotation.y += 180;
-                //print ("Unable to see a clear path, going back.");
-            }
-            else
-            {
-                if (frontObsR == true && frontObsL == true)
-                {
-                    if (frontObsRInfo.transform != frontObsLInfo.transform)
-                    {
-                        if (frontObsRInfo.distance > frontObsLInfo.distance)
-                        {
-                            // We prioritize dodging the obstacle on the left since that's the closest one.
-                            ChangeDeviation (true);
-                            //print("Dodging front left obstacle.");
-                        }
-                        else
-                        {
-                            // We prioritize dodging the obstacle on the right since that's the closest one.
-                            ChangeDeviation (false);
-                            //print("Dodging front right obstacle.");
-                        }
-                    }
-                    else
-                    {
-                        if (sideObsL == sideObsR)
-                        {
-                            if (Vector3.Angle (this.transform.right, frontObsRInfo.normal) < Vector3.Angle (-this.transform.right, frontObsRInfo.normal))
-                            {
-                                // The enemy turns right since that's the better option taking its current rotation into account.
-                                ChangeDeviation (true);
-                                //print("Dodging front obstacle by turning right.");
-                            }
-                            else
-                            {
-                                // The enemy turns left since that's the better option taking its current rotation into account.
-                                ChangeDeviation (false);
-                                //print("Dodging front obstacle by turning left.");
-                            }
-                        }
-                        else
-                        {
-                            if (sideObsR == true)
-                            {
-                                // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
-                                ChangeDeviation (false);
-                                //print("Moving left to avoid the other obstacles.");
-                            }
-                            else
-                            {
-                                // The only place where the enemy sees no obstacles is the right side, so it moves towards that direction.
-                                ChangeDeviation (true);
-                                //print("Moving right to avoid the other obstacles.");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (frontObsR == true || frontObsL == true)
-                    {
-                        if (frontObsL == true)
-                        {
-                            // The enemy avoids hitting the corner in front of it by turning right.
-                            ChangeDeviation (true);
-                            //print("Avoiding corner by turning right.");
-                        }
-                        else
-                        {
-                            // The enemy avoids hitting the corner in front of it by turning left.
-                            ChangeDeviation (false);
-                            //print("Avoiding corner by turning left.");
-                        }
-                    }
-                    else
-                    {
-                        if (sideObsR == true || sideObsL == true)
-                        {
-                            //deviation = 0;
-                            if (sideObsL == true)
-                            {
-                                // The enemy moves parallel to the wall on its left.
-                                targetRotation.y = +Vector3.Angle (new Vector3 (sideObsLInfo.normal.z, sideObsLInfo.normal.y, sideObsLInfo.normal.x), this.transform.forward);
-                                //print("Moving parallel to the left wall.");
-                            }
-                            else
-                            {
-                                // The enemy moves parallel to the wall on its right.
-                                targetRotation.y = -Vector3.Angle (new Vector3 (sideObsRInfo.normal.z, sideObsRInfo.normal.y, sideObsRInfo.normal.x), this.transform.forward);
-                                //print("Moving parallel to the right wall.");
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-      
-        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
+        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);*/
 
         // The enemy will rotate faster if it's close to an obstacle, in order to avoid clipping throught it.
         /*if (closeObstacle == true)
@@ -339,8 +207,14 @@ public class Enemy : MonoBehaviour
         }
         else
         {*/
-            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
+        //this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
         //}
+
+        Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+        var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
+
+        this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
 
         if (actualState == state.CHASE)
         {
@@ -430,7 +304,10 @@ public class Enemy : MonoBehaviour
             {
                 backToPatrol = false;
                 unit.target = null;
-                target = target.gameObject.GetComponent<Waypoint>().nextPoint;
+                if (uniqueWpt == false) 
+                {
+                    target = target.gameObject.GetComponent<Waypoint>().nextPoint;
+                }
                 auxTarget = target;
             }
         }

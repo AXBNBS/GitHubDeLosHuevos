@@ -15,8 +15,8 @@ public class Unit : MonoBehaviour
     private int targetIndex;
     private Enemy enemy;
     private float colliderLimit;
-    private Vector3 lastFramePos;
-    //private RaycastHit hit;
+    private bool stuck;
+    private RaycastHit hit;
 
 
     private void Start ()
@@ -24,7 +24,7 @@ public class Unit : MonoBehaviour
         obstaclesLayer = LayerMask.GetMask ("obstacleMask");
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
-        //InvokeRepeating ("GetPath", 0, 1);
+        stuck = false;
     }
 
 
@@ -39,13 +39,25 @@ public class Unit : MonoBehaviour
         {
             if (enemy.backToPatrol == true) 
             {
-                if (this.transform.position == lastFramePos && Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward * 10, obstaclesLayer) == true) 
+                if (stuck == true && Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward * (colliderLimit + 0.4f), out hit, obstaclesLayer) == true) 
                 {
-                    this.transform.Translate (-this.transform.forward);
+                    print("pushed");
+                    this.transform.Translate (hit.normal * 3);
+                    GetPath ();
+
+                    stuck = false;
+                }
+                /*print ("stuck");
+                this.transform.Translate (-this.transform.forward);
+                if (this.transform.position == lastFramePos && Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward * 10, obstaclesLayer) == true) 
+                if (this.transform.position == lastFramePos)
+                {
+                    /*this.transform.Translate (-this.transform.forward);
                     print("pushed");
 
+                    print("stuck");
                     GetPath ();
-                }
+                }*/
             }
             else
             {
@@ -84,7 +96,7 @@ public class Unit : MonoBehaviour
 
     public void OnPathFound (Vector3[] newPath, bool pathSuccessful)
     {
-        //print("owo");
+        stuck = !pathSuccessful;
         if (pathSuccessful == true)
         {
             path = newPath;
@@ -98,7 +110,6 @@ public class Unit : MonoBehaviour
 
     IEnumerator FollowPath ()
     {
-        //print("wenas");
         if (path != null && path.Length > 0) 
         {
             Vector3 currentWaypoint = path[0];
@@ -117,8 +128,7 @@ public class Unit : MonoBehaviour
 
                     currentWaypoint = path[targetIndex];
                 }
-                lastFramePos = this.transform.position;
-                this.transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
+                this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, speed * Time.deltaTime);
 
                 //print(this.transform.position);
                 yield return null;
