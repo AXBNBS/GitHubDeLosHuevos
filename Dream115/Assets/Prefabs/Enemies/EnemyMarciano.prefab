@@ -195,21 +195,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   backToPatrol: 0
-  frontRaysDst: 15
-  sideRaysDst: 7
-  dodgeAngle: 40
-  deviation: 0
-  currentNoObsItr: 0
-  targetNoObsItr: 30
-  raycastOrigins:
-  - {fileID: 3913041819718715085}
-  - {fileID: 221282484488029469}
-  sideObsR: 0
-  sideObsL: 0
-  frontObsR: 0
-  frontObsL: 0
-  closeObstacle: 0
-  clearToTarget: 0
   unit: {fileID: 0}
 --- !u!114 &2149505626583869418
 MonoBehaviour:
@@ -224,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  speed: 5
+  speed: 10
 --- !u!136 &2775612940941549269
 CapsuleCollider:
   m_ObjectHideFlags: 0

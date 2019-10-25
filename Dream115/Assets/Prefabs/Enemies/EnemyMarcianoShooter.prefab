@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2060935575352695254}
   m_Layer: 0
   m_Name: EnemyMarcianoShooter
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,6 +71,7 @@ MonoBehaviour:
   normalTurnSpd: 4
   fastTurnSpd: 8
   target: {fileID: 0}
+  actualState: 0
   shooterEnemy: 1
   beltranoide: 0
   targetMask:
@@ -85,23 +86,7 @@ MonoBehaviour:
   shotSpawn: {fileID: 2060935575734844697}
   enemies: []
   backToPatrol: 0
-  frontRaysDst: 15
-  sideRaysDst: 5
-  dodgeAngle: 30
-  deviation: 0
-  currentNoObsItr: 0
-  targetNoObsItr: 0
-  currentYesObsItr: 0
-  targetYesObsItr: 0
-  raycastOrigins:
-  - {fileID: 2060935576396550528}
-  - {fileID: 2060935576304478072}
-  sideObsR: 0
-  sideObsL: 0
-  frontObsR: 0
-  frontObsL: 0
-  closeObstacle: 0
-  clearToTarget: 0
+  unit: {fileID: 0}
 --- !u!1 &2060935575734844694
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +282,7 @@ SpriteRenderer:
   m_Size: {x: 1.76, y: 2.13}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2060935576635580133

@@ -72,6 +72,10 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+        else 
+        {
+            print ("Start node: " + startNode.walkable + "   Target node: " + targetNode.walkable);
+        }
         yield return null;
         if (pathSuccess)
         {

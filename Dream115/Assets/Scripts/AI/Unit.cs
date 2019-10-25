@@ -10,14 +10,18 @@ public class Unit : MonoBehaviour
     public Transform target;
 
     [SerializeField] private float speed;
+    private LayerMask obstaclesLayer;
     private Vector3[] path;
     private int targetIndex;
     private Enemy enemy;
     private float colliderLimit;
+    private Vector3 lastFramePos;
+    //private RaycastHit hit;
 
 
     private void Start ()
     {
+        obstaclesLayer = LayerMask.GetMask ("obstacleMask");
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
         //InvokeRepeating ("GetPath", 0, 1);
@@ -31,11 +35,24 @@ public class Unit : MonoBehaviour
             InvokeRepeating ("GetPath", 0, 1);
         }
 
-        if (enemy.actualState == Enemy.state.PATROL && enemy.backToPatrol == false) 
+        if (enemy.actualState == Enemy.state.PATROL) 
         {
-            StopAllCoroutines ();
+            if (enemy.backToPatrol == true) 
+            {
+                if (this.transform.position == lastFramePos && Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward * 10, obstaclesLayer) == true) 
+                {
+                    this.transform.Translate (-this.transform.forward);
+                    print("pushed");
 
-            CancelInvoke ("GetPath");
+                    GetPath ();
+                }
+            }
+            else
+            {
+                StopAllCoroutines ();
+
+                CancelInvoke ("GetPath");
+            }
         }
         //print(IsInvoking("GetPath"));
         /*if (target == null)
@@ -100,9 +117,10 @@ public class Unit : MonoBehaviour
 
                     currentWaypoint = path[targetIndex];
                 }
-                transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
+                lastFramePos = this.transform.position;
+                this.transform.position = Vector3.MoveTowards (transform.position, currentWaypoint, speed * Time.deltaTime);
 
-                //print(currentWaypoint);
+                //print(this.transform.position);
                 yield return null;
             }
         }

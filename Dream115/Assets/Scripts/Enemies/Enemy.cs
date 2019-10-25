@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour
 
     float stoppingDistance = 3.0f;
 
-    public bool backToPatrol;
+    public bool backToPatrol, followingPlayer;
     public Unit unit;
 
     //[SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
@@ -72,6 +72,14 @@ public class Enemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         auxTarget = target;
         animator = this.GetComponentInChildren<Animator> ();
+
+        GameObject[] enemiesObj = GameObject.FindGameObjectsWithTag ("Enemy");
+
+        enemies = new Enemy[enemiesObj.Length];
+        for (int i = 0; i < enemies.Length; i += 1) 
+        {
+            enemies[i] = enemiesObj[i].GetComponent<Enemy> ();
+        }
         //currentNoObsItr = 0;
         //raycastOrigins = new Transform[2];
 
@@ -87,6 +95,7 @@ public class Enemy : MonoBehaviour
             }
         }*/
         backToPatrol = false;
+        followingPlayer = false;
         /*sideObsR = false;
         sideObsL = false;
         frontObsR = false;
@@ -335,15 +344,15 @@ public class Enemy : MonoBehaviour
 
         if (actualState == state.CHASE)
         {
-            light.color = Color.red;
+            //light.color = Color.red;
             //actualState = state.CHASE;
-            target = player;
             foreach (Enemy enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
                 enemy.light.color = Color.red;
                 enemy.actualState = state.CHASE;
                 enemy.backToPatrol = false;
                 enemy.target = player;
+                enemy.unit.target = enemy.target;
             }
 
             if (shooterEnemy && Vector3.Distance (transform.position, target.position) <= viewRadiusShoot && Time.time > nextFire) //Comprueba si hay alguien en rango de tiro
@@ -380,8 +389,8 @@ public class Enemy : MonoBehaviour
             {
                 Destroy (target.gameObject);
 
-                PatrolAgain ();
-                /*actualState = state.PATROL;
+                /*PatrolAgain ();
+                actualState = state.PATROL;
                 backToPatrol = true;
                 target = auxTarget;*/
                 foreach (Enemy enemy in enemies)
@@ -453,8 +462,9 @@ public class Enemy : MonoBehaviour
                 if (PlayerStats.Instance.playerInvisible == false && Physics.Raycast (transform.position, dirToTarget, distToTarget, obstacleMask) == false) //Si no es invisible y no encontramos obstáculos por el medio.
                 {
                     actualState = state.CHASE; //Si ve al personaje pasa a estado de persecución.
-                    unit.target = player;
-                    backToPatrol = false;
+                    /*target = player;
+                    unit.target = target;
+                    backToPatrol = false;*/
 
                     StopAllCoroutines ();
 
@@ -568,21 +578,44 @@ public class Enemy : MonoBehaviour
         actualState = state.PATROL;
         target = auxTarget;
         unit.target = target;
-        //if (Physics.Raycast (this.transform.position, this.transform.forward, colliderLimit * 2, obstacleMask) == true) 
+        /*if (Physics.Raycast (this.transform.position, this.transform.forward, colliderLimit * 2, obstacleMask) == true) 
         if (Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward.normalized * 10, out hit, obstacleMask) == true)
         {
-            print(":/");
+            print("pushback");
             this.transform.Translate (-hit.normal);
-        }
+        }*/
 
         unit.GetPath ();
     }
 
 
+    // Causes the enemy to keep following the player despite losing sight of him/her.
     IEnumerator KeepFollow ()
     {
+        followingPlayer = true;
+
         yield return new WaitForSeconds (5);
 
-        PatrolAgain ();
+        followingPlayer = false;
+
+        bool playerLost = true;
+
+        foreach (Enemy e in enemies) 
+        {
+            if (e.followingPlayer == true) 
+            {
+                playerLost = false;
+
+                break;
+            }
+        }
+
+        if (playerLost == true) 
+        {
+            foreach (Enemy e in enemies)
+            {
+                e.PatrolAgain ();
+            }
+        }
     }
 }
