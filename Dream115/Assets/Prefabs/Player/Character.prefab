@@ -519,11 +519,11 @@ GameObject:
   m_Component:
   - component: {fileID: 6554515646694090810}
   - component: {fileID: 6554515646694090812}
+  - component: {fileID: 1620003849}
   - component: {fileID: 1218056204}
   - component: {fileID: 582048588}
   - component: {fileID: 670582061}
   - component: {fileID: 7443342899400502479}
-  - component: {fileID: 1620003849}
   m_Layer: 8
   m_Name: Character
   m_TagString: Player
@@ -569,72 +569,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 2.25, z: 0}
---- !u!114 &1218056204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6554515646694090815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f43b4b9a1605faf4787bd01a2d52854d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allowInput: 0
-  claim: {fileID: 3082218093934259171, guid: 45f0ad422f24f414a93e577b53c443f4, type: 3}
-  lastKnownPos: {x: 0, y: 0, z: 0}
-  clapClp: {fileID: 8300000, guid: 3736fbaef837df24da8584a60b098604, type: 3}
-  clapRad: 15
---- !u!114 &582048588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6554515646694090815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 522b5d61eaf9ba14bb235626ae2ae3de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: []
-  canvas: {fileID: 0}
-  lastKnownPos: {x: 0, y: 0, z: 0}
-  shownText: {fileID: 0}
-  cameraRef: {fileID: 0}
-  normalMod: {fileID: 7737328213779747501}
-  invisibleMod: {fileID: 7737328214968605907}
-  invisibilityTime: 5
---- !u!114 &670582061
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6554515646694090815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df93d424e83400e4ca8a000328b11f89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthBar: {fileID: 315396184}
-  canvas: {fileID: 0}
---- !u!114 &7443342899400502479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6554515646694090815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4198548aa1cc89488b0814404ea4775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RegalosRecogidos: 0
-  RegalosACoger: 2
-  playerInvisible: 0
 --- !u!82 &1620003849
 AudioSource:
   m_ObjectHideFlags: 0
@@ -732,6 +666,71 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1218056204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6554515646694090815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43b4b9a1605faf4787bd01a2d52854d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowInput: 0
+  claim: {fileID: 3082218093934259171, guid: 45f0ad422f24f414a93e577b53c443f4, type: 3}
+  clapClp: {fileID: 8300000, guid: 3736fbaef837df24da8584a60b098604, type: 3}
+  clapRad: 15
+--- !u!114 &582048588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6554515646694090815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 522b5d61eaf9ba14bb235626ae2ae3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: []
+  canvas: {fileID: 0}
+  lastKnownPos: {x: 0, y: 0, z: 0}
+  shownText: {fileID: 0}
+  cameraRef: {fileID: 0}
+  normalMod: {fileID: 7737328213779747501}
+  invisibleMod: {fileID: 7737328214968605907}
+  invisibilityTime: 5
+--- !u!114 &670582061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6554515646694090815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df93d424e83400e4ca8a000328b11f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 315396184}
+  canvas: {fileID: 0}
+--- !u!114 &7443342899400502479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6554515646694090815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4198548aa1cc89488b0814404ea4775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RegalosRecogidos: 0
+  RegalosACoger: 2
+  playerInvisible: 0
 --- !u!1001 &6554515645718339820
 PrefabInstance:
   m_ObjectHideFlags: 0

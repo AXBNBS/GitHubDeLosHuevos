@@ -250,8 +250,8 @@ public class Enemy : MonoBehaviour
                 animator.SetFloat ("Speed", 12f);//Sigue persiguiendo al personaje
 
                 //unit.target = target;
-                if (beltranoide) //Si es un beltranoide
-                    normalMoveSpd *= 2.5f; //Te persigue a mayor velocidad
+                /*if (beltranoide) //Si es un beltranoide
+                    normalMoveSpd *= 2.5f; //Te persigue a mayor velocidad*/
             }
         }
         else if (actualState == state.ALERT)
@@ -286,7 +286,7 @@ public class Enemy : MonoBehaviour
             {
                 unit.target = null;
             }*/
-            animator.SetFloat ("Speed", 1f);
+            animator.SetFloat ("Speed", 1);
         }
     }
 
