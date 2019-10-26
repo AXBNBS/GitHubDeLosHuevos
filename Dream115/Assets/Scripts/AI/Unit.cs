@@ -17,6 +17,7 @@ public class Unit : MonoBehaviour
     private float colliderLimit;
     private bool stuck;
     private RaycastHit hit;
+    private PlayerInteraction playerInt;
 
 
     private void Start ()
@@ -25,12 +26,14 @@ public class Unit : MonoBehaviour
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
         stuck = false;
+        playerInt = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteraction> ();
     }
 
 
     private void Update ()
     {
-        if (IsInvoking ("GetPath") == false && enemy.actualState == Enemy.state.CHASE && Vector3.Distance (this.transform.position, target.position) >= colliderLimit) 
+        if (IsInvoking ("GetPath") == false && enemy.actualState == Enemy.state.CHASE && ((PlayerStats.Instance.playerInvisible == false && Vector3.Distance (this.transform.position, target.position) >= colliderLimit) || 
+            (PlayerStats.Instance.playerInvisible == true && Vector3.Distance (this.transform.position, playerInt.lastKnownPos) >= colliderLimit))) 
         {
             InvokeRepeating ("GetPath", 0, 1);
         }
@@ -84,13 +87,39 @@ public class Unit : MonoBehaviour
 
     public void GetPath () 
     {
-        PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+        if (IsInvoking ("GetPath") == true)
+        {
+            if (PlayerStats.Instance.playerInvisible == true)
+            {
+                PathRequestManager.RequestPath (this.transform.position, playerInt.lastKnownPos, OnPathFound);
+
+                if (enemy.actualState != Enemy.state.CHASE || Vector3.Distance (this.transform.position, playerInt.lastKnownPos) < colliderLimit)
+                {
+                    CancelInvoke ("GetPath");
+                }
+            }
+            else 
+            {
+                PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+
+                if (enemy.actualState != Enemy.state.CHASE || Vector3.Distance (this.transform.position, target.position) < colliderLimit)
+                {
+                    CancelInvoke ("GetPath");
+                }
+            }
+        }
+        else 
+        {
+            PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
+        }
+
+        /*PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
         //print("vamos venga");
 
         if (IsInvoking ("GetPath") == true && (enemy.actualState != Enemy.state.CHASE || Vector3.Distance (this.transform.position, target.position) < colliderLimit))
         {
             CancelInvoke ("GetPath");
-        }
+        }*/
     }
 
 

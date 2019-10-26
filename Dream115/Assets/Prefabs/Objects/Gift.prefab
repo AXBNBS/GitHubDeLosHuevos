@@ -123,9 +123,10 @@ GameObject:
   - component: {fileID: 3183602903721220608}
   - component: {fileID: 9156632310177556217}
   - component: {fileID: 6607986768924582613}
+  - component: {fileID: 2037378723954125456}
   - component: {fileID: 1716633059089690077}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Gift
   m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,6 +206,19 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2.1256568, y: 2.1256573, z: 2.026106}
+  m_Center: {x: 0, y: 0, z: 0.013052824}
+--- !u!135 &2037378723954125456
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7434935692501537317}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
   m_Center: {x: 0, y: 0, z: 0.013052824}
 --- !u!114 &1716633059089690077
 MonoBehaviour:

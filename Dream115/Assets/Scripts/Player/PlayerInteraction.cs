@@ -12,6 +12,7 @@ public class PlayerInteraction : MonoBehaviour
     public static PlayerInteraction Instance;
     public string[] text;
     public GameObject canvas;
+    public Vector3 lastKnownPos;
 
     [SerializeField] private Text shownText;
     [SerializeField] private CameraMovement cameraRef;
@@ -207,7 +208,11 @@ public class PlayerInteraction : MonoBehaviour
             StartCoroutine (RemainInvisible ());
         }
 
-        PlayerStats.Instance.playerInvisible = invisible;
+        if (PlayerStats.Instance.playerInvisible != invisible) 
+        {
+            lastKnownPos = this.transform.position;
+            PlayerStats.Instance.playerInvisible = invisible;
+        }
     }
     
 

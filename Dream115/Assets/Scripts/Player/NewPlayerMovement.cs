@@ -9,6 +9,7 @@ public class NewPlayerMovement : MonoBehaviour
 {
     public bool allowInput;
     public GameObject claim;
+    public Vector3 lastKnownPos;
 
     [SerializeField] private AudioClip clapClp;
     [SerializeField] private int clapRad;

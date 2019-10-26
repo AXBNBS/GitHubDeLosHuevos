@@ -1,16 +1,18 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Turret : MonoBehaviour
 {
-
     enum state { PATROL, DETECTED };
 
     state actualState;
 
-    float turnSpeed = 2.0f;
+    [SerializeField] private float turnSpeed = 2.0f;
 
     public Transform target;
     Transform auxTarget;
@@ -33,20 +35,21 @@ public class Turret : MonoBehaviour
     public GameObject shot; //Objeto que se disparara
     public Transform shotSpawn; //Spawn del disparo
 
-    private float fireRate = 3f; //Rate de disparo para que no este continuamente disparando
+    [SerializeField] private float fireRate; //Rate de disparo para que no este continuamente disparando
     private float nextFire = 0f; //Tiempo que falta para el siguiente disparo
     private SpriteRenderer[] minimapIcons;
+    private RaycastHit hit;
 
 
     // Start is called before the first frame update
-    void Start()
+    void Start ()
     {
-        actualState = state.PATROL;
-        transform.LookAt (new Vector3 (target.position.x, transform.position.y, target.position.z));
+        this.transform.LookAt (target.position);
 
+        actualState = state.PATROL;
         viewRadius = 30f;
         viewAngle = 50f;
-        light = light.GetComponent<Light>();
+        light = light.GetComponent<Light> ();
         auxTarget = target;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
     }
@@ -55,6 +58,7 @@ public class Turret : MonoBehaviour
     // Update is called once per frame
     void Update ()
     {
+        //print(this.transform.rotation.eulerAngles.y);
         FindVisibleTargets ();
         Move ();
 
@@ -71,7 +75,7 @@ public class Turret : MonoBehaviour
     }
 
 
-    private void FindVisibleTargets()
+    private void FindVisibleTargets ()
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
@@ -99,7 +103,8 @@ public class Turret : MonoBehaviour
         }
     }
 
-    private void Move()
+
+    private void Move ()
     {
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
 
@@ -110,8 +115,9 @@ public class Turret : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotationOnlyY, turnSpeed * Time.deltaTime);
 
         float distToTarget = Vector3.Distance(transform.position, target.position);
-        if (Physics.Raycast(transform.position, transform.forward, distToTarget, rotationPoint) && actualState==state.PATROL)
+        if (actualState == state.PATROL && Physics.Raycast (transform.position, transform.forward, out hit, distToTarget, rotationPoint, QueryTriggerInteraction.Collide) == true && hit.transform == target)
         {
+            //print
             target = target.gameObject.GetComponent<Waypoint>().nextPoint;
             auxTarget = target;
         }
@@ -135,10 +141,12 @@ public class Turret : MonoBehaviour
         }
     }
 
+
     private void Fire() //Disparo
     {
         Instantiate(shot, shotSpawn.position, shotSpawn.rotation); //Instancia el tiro
     }
+
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
     {
@@ -149,7 +157,8 @@ public class Turret : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
-    private void OnDrawGizmos()
+
+    private void OnDrawGizmosSelected ()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
@@ -160,6 +169,6 @@ public class Turret : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
         Gizmos.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
 
-        Gizmos.DrawRay(transform.position, transform.forward * 100);
+        Gizmos.DrawRay(transform.position, transform.forward * 20);
     }
 }

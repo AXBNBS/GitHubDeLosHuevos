@@ -74,13 +74,13 @@ public class Enemy : MonoBehaviour
         auxTarget = target;
         animator = this.GetComponentInChildren<Animator> ();
 
-        GameObject[] enemiesObj = GameObject.FindGameObjectsWithTag ("Enemy");
+        /*GameObject[] enemiesObj = GameObject.FindGameObjectsWithTag ("Enemy");
 
         enemies = new Enemy[enemiesObj.Length];
         for (int i = 0; i < enemies.Length; i += 1) 
         {
             enemies[i] = enemiesObj[i].GetComponent<Enemy> ();
-        }
+        }*/
         //currentNoObsItr = 0;
         //raycastOrigins = new Transform[2];
 
@@ -243,14 +243,13 @@ public class Enemy : MonoBehaviour
                 animator.SetFloat ("Speed", 0f);//Para de andar
 
                 //unit.target = null;
-                normalMoveSpd = 0;//
+                //normalMoveSpd = 0;//
             }
             else
             {
                 animator.SetFloat ("Speed", 12f);//Sigue persiguiendo al personaje
 
                 //unit.target = target;
-                normalMoveSpd = 5.0f;
                 if (beltranoide) //Si es un beltranoide
                     normalMoveSpd *= 2.5f; //Te persigue a mayor velocidad
             }
@@ -288,7 +287,6 @@ public class Enemy : MonoBehaviour
                 unit.target = null;
             }*/
             animator.SetFloat ("Speed", 1f);
-            normalMoveSpd = 5.0f;
         }
     }
 
