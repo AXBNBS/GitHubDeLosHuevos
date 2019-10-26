@@ -11,6 +11,8 @@ TagManager:
   - RaycastOrigin
   - rotationPoint
   - LevelChange
+  - EnemyChaney
+  - EnemyTurret
   layers:
   - Default
   - TransparentFX

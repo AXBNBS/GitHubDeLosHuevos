@@ -181,7 +181,7 @@ GameObject:
   - component: {fileID: 392554140}
   m_Layer: 0
   m_Name: EnemyChaney
-  m_TagString: Enemy
+  m_TagString: EnemyChaney
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -246,14 +246,6 @@ MonoBehaviour:
     m_Bits: 512
   light: {fileID: 8748211042107868590}
   player: {fileID: 0}
-  enemies: []
-  backToPatrol: 0
-  frontRaysDst: 15
-  sideRaysDst: 5
-  dodgeAngle: 30
-  raycastOrigins:
-  - {fileID: 1484645181}
-  - {fileID: 1445468906}
 --- !u!1 &8748211042079207377
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,7 +319,7 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 0.89669865, b: 0.07058824, a: 0.94509804}
   m_Intensity: 1
-  m_Range: 330
+  m_Range: 63
   m_SpotAngle: 120
   m_InnerSpotAngle: 1
   m_CookieSize: 10

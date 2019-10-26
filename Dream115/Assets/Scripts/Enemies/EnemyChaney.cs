@@ -41,16 +41,16 @@ public class EnemyChaney : MonoBehaviour
 
     private Animator animator; //El animator por si no habia quedado claro
 
-    public EnemyChaney[] enemies; //Cada enemigo guarda toda la lista de enemigos para llamarles si ve al personaje
+    //public EnemyChaney[] enemies; //Cada enemigo guarda toda la lista de enemigos para llamarles si ve al personaje
 
     float stoppingDistance = 3.0f;
 
-    public bool backToPatrol;
+    //public bool backToPatrol;
 
-    [SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
-    [SerializeField] private Transform[] raycastOrigins;
-    [SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
-    private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
+    //[SerializeField] private int frontRaysDst, sideRaysDst, dodgeAngle, deviation, currentNoObsItr, targetNoObsItr;
+    //[SerializeField] private Transform[] raycastOrigins;
+    //[SerializeField] private bool sideObsR, sideObsL, frontObsR, frontObsL, closeObstacle, clearToTarget;
+    //private RaycastHit sideObsRInfo, sideObsLInfo, frontObsRInfo, frontObsLInfo;
     private float colliderLimit;
     private bool charging = false; //Para saber si esta cargando o no
     private bool stopped = false; //Para saber si esta parado
@@ -73,27 +73,26 @@ public class EnemyChaney : MonoBehaviour
         auxTarget = target;
 
         animator = this.GetComponentInChildren<Animator> ();
-        raycastOrigins = new Transform[2];
+        //raycastOrigins = new Transform[2];
 
         Transform children = this.GetComponentInChildren<Transform> ();
         int index = 0;
 
-        foreach (Transform t in children)
+        /*foreach (Transform t in children)
         {
             if (t.tag == "RaycastOrigin")
             {
                 raycastOrigins[index] = t;
                 index += 1;
             }
-        }
-        backToPatrol = true;
-        sideObsR = false;
+        }*/
+        //backToPatrol = true;
+        /*sideObsR = false;
         sideObsL = false;
         frontObsR = false;
         frontObsL = false;
-        closeObstacle = false;
+        closeObstacle = false;*/
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius + 2;
-        deviation = 0;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
     }
 
@@ -105,7 +104,7 @@ public class EnemyChaney : MonoBehaviour
         FollowRoute ();
         Move ();
 
-        if (frontObsR == false && frontObsL == false)
+        /*if (frontObsR == false && frontObsL == false)
         {
             currentNoObsItr += 1;
             //currentYesObsItr = 0;
@@ -118,7 +117,7 @@ public class EnemyChaney : MonoBehaviour
         if (currentNoObsItr >= targetNoObsItr)
         {
             deviation = 0;
-        }
+        }*/
         if (actualState == state.CHASE)
         {
             minimapIcons[0].enabled = false;
@@ -144,7 +143,7 @@ public class EnemyChaney : MonoBehaviour
         Gizmos.DrawLine (transform.position, transform.position + viewAngleA * viewRadius);
         Gizmos.DrawLine (transform.position, transform.position + viewAngleB * viewRadius);
 
-        // Rays that represent the raycasts launched from the enemy's shoulders onwards.
+        /* Rays that represent the raycasts launched from the enemy's shoulders onwards.
         Gizmos.color = Color.yellow;
 
         Gizmos.DrawRay (raycastOrigins[0].position, raycastOrigins[0].forward * frontRaysDst);
@@ -156,7 +155,7 @@ public class EnemyChaney : MonoBehaviour
         Gizmos.color = Color.black;
 
         Gizmos.DrawLine (raycastOrigins[0].position, target.position);
-        Gizmos.DrawLine (raycastOrigins[1].position, target.position);
+        Gizmos.DrawLine (raycastOrigins[1].position, target.position);*/
 
         //Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
 
@@ -167,19 +166,19 @@ public class EnemyChaney : MonoBehaviour
     private void Move ()
     {
         // The enemy's speed will be drastically reduced if it's close to an obstacle.
-        if (closeObstacle == false)
-        {
+        //if (closeObstacle == false)
+        //{
             transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
-        }
-        else
+        //}
+        /*else
         {
             transform.Translate (new Vector3 (0, 0, slowMoveSpd * Time.deltaTime));
-        }
+        }*/
         
         Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
         var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
 
-        if (actualState != state.PATROL || backToPatrol == true)
+        /*if (actualState != state.PATROL || backToPatrol == true)
         {
             LookForObstacles ();
 
@@ -307,26 +306,26 @@ public class EnemyChaney : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
       
-        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y + deviation, this.transform.rotation.eulerAngles.z);
+        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
 
         // The enemy will rotate faster if it's close to an obstacle, in order to avoid clipping throught it.
-        if (closeObstacle == true)
+        /*if (closeObstacle == true)
         {
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, fastTurnSpd * Time.deltaTime);
         }
         else
-        {
+        {*/
             this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
-        }
+        //}
 
         if ((actualState == state.CHASE || charging == true) && stopped == false) //Si ha visto al personaje o esta cargando
         {
             light.color = Color.red;
             actualState = state.CHASE;
             animator.SetFloat ("Speed", 12f);//Sigue persiguiendo al personaje
-            normalMoveSpd = 15.0f;
+            normalMoveSpd = 20;
             /*foreach (EnemyChaney enemy in enemies)//Avisa a todos los enemigos para que persigan al jugador
             {
                 enemy.light.color = Color.red;
@@ -363,9 +362,9 @@ public class EnemyChaney : MonoBehaviour
                 Destroy (target.gameObject);
 
                 actualState = state.PATROL;
-                backToPatrol = true;
+                //backToPatrol = true;
                 target = auxTarget;
-                foreach (EnemyChaney enemy in enemies)
+                /*foreach (EnemyChaney enemy in enemies)
                 {
                     if (enemy.actualState != state.PATROL)
                     {
@@ -373,7 +372,7 @@ public class EnemyChaney : MonoBehaviour
                         enemy.backToPatrol = true;
                         enemy.target = enemy.auxTarget;
                     }
-                }
+                }*/
             }
         }
         else
@@ -383,7 +382,7 @@ public class EnemyChaney : MonoBehaviour
             if (!stopped)
             {
                 animator.SetFloat("Speed", 1f);
-                normalMoveSpd = 5.0f;
+                normalMoveSpd = 10;
             }
         }
     }
@@ -395,7 +394,7 @@ public class EnemyChaney : MonoBehaviour
         {
             if (Vector3.Distance (this.transform.position, target.transform.position) <= 1)
             {
-                backToPatrol = false;
+                actualState = state.PATROL;
                 target = target.gameObject.GetComponent<Waypoint>().nextPoint;
                 if (charging)
                 {
@@ -445,7 +444,7 @@ public class EnemyChaney : MonoBehaviour
         if (actualState == state.CHASE)
         {
             actualState = state.PATROL;//Si no ve al personaje ni investiga una señal sigue patrullando
-            backToPatrol = true;
+            //backToPatrol = true;
         }
     }
 
@@ -478,7 +477,7 @@ public class EnemyChaney : MonoBehaviour
 
     // First of all, the two linecasts check if there are no obstacles between the enemy and the current target. If that's the case, no further comprovations are required and the enemy proceeds with its route towards the target. However, if obstacles 
     //are present we also need to check the sides by launching 2 other rays which's info might be useful for later.
-    private void LookForObstacles ()
+    /*private void LookForObstacles ()
     {
         clearToTarget = Physics.Linecast (raycastOrigins[0].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false &&
             Physics.Linecast (raycastOrigins[1].position, target.position, obstacleMask, QueryTriggerInteraction.Collide) == false;
@@ -499,10 +498,10 @@ public class EnemyChaney : MonoBehaviour
             sideObsL = Physics.Raycast (raycastOrigins[1].position, -raycastOrigins[1].right, out sideObsLInfo, sideRaysDst, obstacleMask, QueryTriggerInteraction.Collide);
             closeObstacle = (frontObsL == true && frontObsLInfo.distance < frontRaysDst / 5) || (frontObsR == true && frontObsRInfo.distance < frontRaysDst / 5);
         }
-    }
+    }*/
 
 
-    // We change the value of the deviation we'll add to the rotation of the enemy, we'll also reset the deviation value to 0 if the rotation direction changes suddenly.
+    /* We change the value of the deviation we'll add to the rotation of the enemy, we'll also reset the deviation value to 0 if the rotation direction changes suddenly.
     private void ChangeDeviation (bool add)
     {
         if ((Mathf.Sign (deviation) == +1 && add == false) || Mathf.Sign (deviation) == -1 && add == true)
@@ -519,12 +518,12 @@ public class EnemyChaney : MonoBehaviour
         }
 
         deviation = Mathf.Clamp (deviation, -270, +270);
-    }
+    }*/
 
 
     IEnumerator StopTime ()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds (1.5f);
 
         stopped = false;
     }

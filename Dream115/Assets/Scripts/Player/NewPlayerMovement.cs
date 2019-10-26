@@ -95,7 +95,7 @@ public class NewPlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter (Collider collision)
     {
-        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        if (invulnerability == false && collision.gameObject.tag.Contains ("Enemy") == true)
         {
             playerLife.TakeDamage (40f);
             invulnerability = true;
@@ -107,7 +107,7 @@ public class NewPlayerMovement : MonoBehaviour
 
     private void OnTriggerStay (Collider collision)
     {
-        if (invulnerability == false && collision.gameObject.tag == "Enemy")
+        if (invulnerability == false && collision.gameObject.tag.Contains ("Enemy") == true)
         {
             playerLife.TakeDamage (40f);
             invulnerability = true;

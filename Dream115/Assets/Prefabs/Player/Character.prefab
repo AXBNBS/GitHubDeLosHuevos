@@ -563,7 +563,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 4.25
-  m_Radius: 0.75
+  m_Radius: 1
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -583,7 +583,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowInput: 0
   claim: {fileID: 3082218093934259171, guid: 45f0ad422f24f414a93e577b53c443f4, type: 3}
+  lastKnownPos: {x: 0, y: 0, z: 0}
   clapClp: {fileID: 8300000, guid: 3736fbaef837df24da8584a60b098604, type: 3}
+  clapRad: 20
 --- !u!114 &582048588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,6 +600,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: []
   canvas: {fileID: 0}
+  lastKnownPos: {x: 0, y: 0, z: 0}
   shownText: {fileID: 0}
   cameraRef: {fileID: 0}
   normalMod: {fileID: 7737328213779747501}
