@@ -322,7 +322,7 @@ GameObject:
   - component: {fileID: 8903894972273410700}
   - component: {fileID: 3227448349917121244}
   m_Layer: 0
-  m_Name: LubinaEnemy
+  m_Name: EnemyTurret
   m_TagString: EnemyTurret
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

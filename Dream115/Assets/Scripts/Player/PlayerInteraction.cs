@@ -17,6 +17,7 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private Text shownText;
     [SerializeField] private CameraMovement cameraRef;
     [SerializeField] private Renderer normalMod, invisibleMod;
+    [SerializeField] private int invisibilityTime;
     private GameObject panel, objectToDisable;
     private int activeParagraph, lettersRead;
     private bool paragraphEnd;
@@ -219,7 +220,7 @@ public class PlayerInteraction : MonoBehaviour
     // Coroutine that will wait for 5 seconds before making the player start becoming visible again.
     IEnumerator RemainInvisible ()
     {
-        yield return new WaitForSeconds (5);
+        yield return new WaitForSeconds (invisibilityTime);
 
         ChangePlayerVisibility (false);
     }

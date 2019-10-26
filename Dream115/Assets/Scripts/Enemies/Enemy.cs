@@ -60,7 +60,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     private void Start ()
     {
-        this.transform.position = target.position;
+        //this.transform.position = target.position;
         actualState = state.PATROL;
 
         transform.LookAt (new Vector3 (target.position.x, transform.position.y, target.position.z));

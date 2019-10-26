@@ -9,7 +9,7 @@ public class Unit : MonoBehaviour
 {
     public Transform target;
 
-    [SerializeField] private float speed;
+    [SerializeField] private float alertSpd, chaseSpd;
     private LayerMask obstaclesLayer;
     private Vector3[] path;
     private int targetIndex;
@@ -27,6 +27,7 @@ public class Unit : MonoBehaviour
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
         stuck = false;
         playerInt = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteraction> ();
+        alertSpd = enemy.normalMoveSpd;
     }
 
 
@@ -157,7 +158,14 @@ public class Unit : MonoBehaviour
 
                     currentWaypoint = path[targetIndex];
                 }
-                this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, speed * Time.deltaTime);
+                if (enemy.actualState == Enemy.state.ALERT)
+                {
+                    this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, alertSpd * Time.deltaTime);
+                }
+                else 
+                {
+                    this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, chaseSpd * Time.deltaTime);
+                }
 
                 //print(this.transform.position);
                 yield return null;

@@ -585,7 +585,7 @@ MonoBehaviour:
   claim: {fileID: 3082218093934259171, guid: 45f0ad422f24f414a93e577b53c443f4, type: 3}
   lastKnownPos: {x: 0, y: 0, z: 0}
   clapClp: {fileID: 8300000, guid: 3736fbaef837df24da8584a60b098604, type: 3}
-  clapRad: 20
+  clapRad: 15
 --- !u!114 &582048588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,6 +605,7 @@ MonoBehaviour:
   cameraRef: {fileID: 0}
   normalMod: {fileID: 7737328213779747501}
   invisibleMod: {fileID: 7737328214968605907}
+  invisibilityTime: 5
 --- !u!114 &670582061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RegalosRecogidos: 0
-  RegalosACoger: 1
+  RegalosACoger: 2
   playerInvisible: 0
 --- !u!82 &1620003849
 AudioSource:

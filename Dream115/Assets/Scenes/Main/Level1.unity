@@ -5431,7 +5431,7 @@ PrefabInstance:
     - target: {fileID: 4131595994291659123, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: EnemyTurret
       objectReference: {fileID: 0}
     - target: {fileID: 8903894972273410700, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
@@ -10937,7 +10937,7 @@ PrefabInstance:
     - target: {fileID: 4131595994291659123, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: EnemyTurret
       objectReference: {fileID: 0}
     - target: {fileID: 8903894972273410700, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
@@ -36026,7 +36026,7 @@ PrefabInstance:
     - target: {fileID: 4131595994291659123, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: EnemyTurret
       objectReference: {fileID: 0}
     - target: {fileID: 8903894972273410700, guid: 9229fb8b743186e48ae84b41d2bd18ab,
         type: 3}
@@ -36564,6 +36564,11 @@ PrefabInstance:
         type: 3}
       propertyPath: target
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149505626583869418, guid: ee9d6723bfe7e1746b057ab3e7890530,
+        type: 3}
+      propertyPath: chaseSpd
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2775612940941549269, guid: ee9d6723bfe7e1746b057ab3e7890530,
         type: 3}
@@ -39829,7 +39834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1218056204, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
       propertyPath: clapRad
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}

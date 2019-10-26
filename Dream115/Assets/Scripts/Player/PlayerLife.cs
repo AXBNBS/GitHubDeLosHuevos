@@ -22,7 +22,7 @@ public class PlayerLife : MonoBehaviour
     private Scene scene;
     private Transform cameraTrf;
 
-    private float maxLife = 100f;
+    private float maxLife = 99;
     private bool die = false; //para que no este todo el rato muriendo
 
 

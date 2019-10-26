@@ -97,7 +97,7 @@ public class NewPlayerMovement : MonoBehaviour
     {
         if (invulnerability == false && collision.gameObject.tag.Contains ("Enemy") == true)
         {
-            playerLife.TakeDamage (40f);
+            playerLife.TakeDamage (20f);
             invulnerability = true;
 
             StartCoroutine (InvulnerabilityWaitTime ());
@@ -109,7 +109,7 @@ public class NewPlayerMovement : MonoBehaviour
     {
         if (invulnerability == false && collision.gameObject.tag.Contains ("Enemy") == true)
         {
-            playerLife.TakeDamage (40f);
+            playerLife.TakeDamage (20f);
             invulnerability = true;
             StartCoroutine (InvulnerabilityWaitTime ());
         }

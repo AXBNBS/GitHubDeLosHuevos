@@ -217,7 +217,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 3
+  m_Radius: 3.5
   m_Height: 7.393385
   m_Direction: 1
   m_Center: {x: 0, y: 3.582179, z: 0}
@@ -233,9 +233,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2427098ff7d771847934069b67e694be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalMoveSpd: 5
+  normalMoveSpd: 10
   slowMoveSpd: 0.5
-  normalTurnSpd: 4
+  normalTurnSpd: 8
   fastTurnSpd: 8
   target: {fileID: 0}
   targetMask:
@@ -301,7 +301,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8748211042107868591}
   m_LocalRotation: {x: 0.19314985, y: -0, z: -0, w: 0.9811693}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 6.99, z: -0.57}
   m_LocalScale: {x: 4.55077, y: 4.55077, z: 4.55077}
   m_Children: []
   m_Father: {fileID: 8748211041554368556}

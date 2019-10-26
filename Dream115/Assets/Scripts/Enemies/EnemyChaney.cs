@@ -382,7 +382,7 @@ public class EnemyChaney : MonoBehaviour
             if (!stopped)
             {
                 animator.SetFloat("Speed", 1f);
-                normalMoveSpd = 10;
+                normalMoveSpd = 16;
             }
         }
     }
