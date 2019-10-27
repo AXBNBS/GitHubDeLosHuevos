@@ -241,13 +241,13 @@ public class PlayerInteraction : MonoBehaviour
 
                 break;
             case "Level3":
-                SceneManager.LoadScene ("Level4");
-
-                break;
-            case "Level4":
                 SceneManager.LoadScene ("MainMenu");
 
                 break;
+            /*case "Level4":
+                SceneManager.LoadScene ("MainMenu");
+
+                break;*/
         }
     }
 }

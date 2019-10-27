@@ -107,6 +107,10 @@ public class Enemy : MonoBehaviour
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
         unit = this.gameObject.GetComponent<Unit> ();
         uniqueWpt = target.GetComponent<Waypoint>().nextPoint == null;
+        if (uniqueWpt == true) 
+        {
+            this.transform.position = new Vector3 (target.transform.position.x, this.transform.position.y, target.transform.position.z);
+        }
     }
 
 
@@ -167,22 +171,38 @@ public class Enemy : MonoBehaviour
 
     private void Move ()
     {
-        if (actualState == state.PATROL && backToPatrol == false) 
+        if (actualState == state.PATROL && backToPatrol == false && uniqueWpt == false) 
         {
-            /*float distanceWpt = Vector3.Distance (this.transform.position, target.position);
+           /* Vector3 targetRotation;
+            Quaternion targetRotationOnlyY;
 
-            if (distanceWpt >= 1) 
+            if (uniqueWpt == true)
+            {
+                targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, target.rotation.eulerAngles.y, this.transform.rotation.eulerAngles.z);
+            }
+            else 
             {*/
                 this.transform.Translate (new Vector3 (0, 0, normalMoveSpd * Time.deltaTime));
-            //}
 
-            /*if (uniqueWpt == true && distanceWpt < 1)
-            {
-                this.transform.rotation = Quaternion.Slerp (this.transform.rotation, target.rotation, normalTurnSpd * Time.deltaTime);
+                /*Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+
+                targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+                targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
             }
-            else
-            {*/
-            //}
+            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);*/
+        }
+
+        if (uniqueWpt == true && backToPatrol == false && actualState == state.PATROL)
+        {
+            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, target.rotation, normalTurnSpd * Time.deltaTime);
+        }
+        else 
+        {
+            Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+            Vector3 targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+            Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
+
+            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
         }
 
         // The enemy's speed will be drastically reduced if it's close to an obstacle.
@@ -210,11 +230,9 @@ public class Enemy : MonoBehaviour
         //this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
         //}
 
-        Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
-        var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
-        Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
-
-        this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
+        //Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+        //var targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+        //Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
 
         if (actualState == state.CHASE)
         {
@@ -258,7 +276,9 @@ public class Enemy : MonoBehaviour
         {
             light.color = Color.yellow;
 
-            if (Vector3.Distance (transform.position, target.position) < colliderLimit * 2)
+            animator.SetFloat ("Speed", 12f);
+
+            if (Vector3.Distance (transform.position, target.position) < colliderLimit)
             {
                 Destroy (target.gameObject);
 
@@ -286,7 +306,14 @@ public class Enemy : MonoBehaviour
             {
                 unit.target = null;
             }*/
-            animator.SetFloat ("Speed", 1);
+            if (uniqueWpt == true && backToPatrol == false)
+            {
+                animator.SetFloat ("Speed", 0f);
+            }
+            else 
+            {
+                animator.SetFloat ("Speed", 12f);
+            }
         }
     }
 
@@ -445,8 +472,6 @@ public class Enemy : MonoBehaviour
     public void PatrolAgain () 
     {
         StopAllCoroutines ();
-        
-        RaycastHit hit;
 
         print(":)");
         backToPatrol = true;

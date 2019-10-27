@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour
     private Vector3[] path;
     private int targetIndex;
     private Enemy enemy;
-    private float colliderLimit;
+    private float colliderLimit, turnSpd;
     private bool stuck;
     private RaycastHit hit;
     private PlayerInteraction playerInt;
@@ -25,6 +25,7 @@ public class Unit : MonoBehaviour
         obstaclesLayer = LayerMask.GetMask ("obstacleMask");
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
+        turnSpd = enemy.normalTurnSpd;
         stuck = false;
         playerInt = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteraction> ();
         alertSpd = enemy.normalMoveSpd;
@@ -39,15 +40,15 @@ public class Unit : MonoBehaviour
             InvokeRepeating ("GetPath", 0, 1);
         }
 
-        if (enemy.actualState == Enemy.state.PATROL) 
+        if (enemy.actualState == Enemy.state.PATROL)
         {
-            if (enemy.backToPatrol == true) 
+            if (enemy.backToPatrol == true)
             {
-                if (stuck == true && Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward * (colliderLimit + 0.4f), out hit, obstaclesLayer) == true) 
+                if (stuck == true && Physics.Linecast(this.transform.position, this.transform.position + this.transform.forward * (colliderLimit + 0.4f), out hit, obstaclesLayer) == true)
                 {
                     print("pushed");
-                    this.transform.Translate (hit.normal * 3);
-                    GetPath ();
+                    this.transform.Translate(hit.normal * 3);
+                    GetPath();
 
                     stuck = false;
                 }
@@ -70,6 +71,14 @@ public class Unit : MonoBehaviour
                 CancelInvoke ("GetPath");
             }
         }
+        /*else 
+        {
+            Vector3 lookDirection = (this.transform.position - target.position).normalized;
+            float targetRotationY = Quaternion.LookRotation(lookDirection).eulerAngles.y;
+            //targetRotationOnlyY = Quaternion.Euler(this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
+
+            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotationY, this.transform.rotation.eulerAngles.z), turnSpd * Time.deltaTime);
+        }*/
         //print(IsInvoking("GetPath"));
         /*if (target == null)
         {

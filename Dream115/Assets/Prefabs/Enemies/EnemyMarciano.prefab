@@ -189,7 +189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalMoveSpd: 5
   slowMoveSpd: 2
-  normalTurnSpd: 3
+  normalTurnSpd: 8
   fastTurnSpd: 4
   target: {fileID: 0}
   actualState: 0
