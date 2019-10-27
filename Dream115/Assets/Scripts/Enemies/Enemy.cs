@@ -69,7 +69,7 @@ public class Enemy : MonoBehaviour
         viewAngle = 120f;
         viewRadiusShoot = viewRadius / 1.5f; //Distancia donde dispararía el enemigo
 
-        light = this.gameObject.GetComponentInChildren<Light> ();
+        light = light.GetComponent<Light> ();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         auxTarget = target;
         animator = this.GetComponentInChildren<Animator> ();
