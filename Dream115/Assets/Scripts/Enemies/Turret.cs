@@ -49,7 +49,8 @@ public class Turret : MonoBehaviour
         actualState = state.PATROL;
         viewRadius = 30f;
         viewAngle = 50f;
-        light = light.GetComponent<Light> ();
+        light = this.gameObject.GetComponentInChildren<Light> ();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         auxTarget = target;
         minimapIcons = this.gameObject.GetComponentsInChildren<SpriteRenderer> ();
     }
