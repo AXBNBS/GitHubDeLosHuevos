@@ -6472,7 +6472,7 @@ PrefabInstance:
     - target: {fileID: 6122430440162705507, guid: 2d23cdd1d6cc0ac4f8bd1be5c2ea00bd,
         type: 3}
       propertyPath: m_Name
-      value: Dalsy (2)
+      value: Dalsy2
       objectReference: {fileID: 0}
     - target: {fileID: 6122430440162705535, guid: 2d23cdd1d6cc0ac4f8bd1be5c2ea00bd,
         type: 3}
@@ -8992,6 +8992,21 @@ PrefabInstance:
         type: 3}
       propertyPath: text.Array.data[1]
       value: I don't get why a kid would want this, but whateaver...
+      objectReference: {fileID: 0}
+    - target: {fileID: 7921407159419565239, guid: e497762229e56ce4c91d806a0d690198,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7921407159419565239, guid: e497762229e56ce4c91d806a0d690198,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7921407159419565239, guid: e497762229e56ce4c91d806a0d690198,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e497762229e56ce4c91d806a0d690198, type: 3}
@@ -13152,7 +13167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 467200726}
   m_Layer: 0
-  m_Name: dalsys
+  m_Name: Dalsys
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47298,7 +47313,7 @@ PrefabInstance:
     - target: {fileID: 6122430440162705507, guid: 2d23cdd1d6cc0ac4f8bd1be5c2ea00bd,
         type: 3}
       propertyPath: m_Name
-      value: Dalsy (1)
+      value: Dalsy1
       objectReference: {fileID: 0}
     - target: {fileID: 6122430440162705535, guid: 2d23cdd1d6cc0ac4f8bd1be5c2ea00bd,
         type: 3}
@@ -48001,7 +48016,7 @@ PrefabInstance:
     - target: {fileID: 6122430440162705507, guid: 2d23cdd1d6cc0ac4f8bd1be5c2ea00bd,
         type: 3}
       propertyPath: m_Name
-      value: Dalsy
+      value: Dalsy3
       objectReference: {fileID: 0}
     - target: {fileID: 6122430440162705535, guid: 2d23cdd1d6cc0ac4f8bd1be5c2ea00bd,
         type: 3}
@@ -57289,6 +57304,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1007536471, guid: 6a1d3f989c152144e8d5a665c98543dc, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7443342899400502479, guid: 6a1d3f989c152144e8d5a665c98543dc,
+        type: 3}
+      propertyPath: playerInvisible
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

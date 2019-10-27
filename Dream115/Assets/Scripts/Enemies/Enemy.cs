@@ -158,10 +158,10 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawLine (transform.position, transform.position + viewAngleA * viewRadius);
         Gizmos.DrawLine (transform.position, transform.position + viewAngleB * viewRadius);
 
-        // Rays that represent the raycasts launched from the enemy's shoulders onwards.
+        /* Rays that represent the raycasts launched from the enemy's shoulders onwards.
         Gizmos.color = Color.yellow;
 
-        Gizmos.DrawLine (this.transform.position, this.transform.position + this.transform.forward.normalized * 10);
+        Gizmos.DrawLine (this.transform.position, this.transform.position + this.transform.forward.normalized * 10);*/
 
         Gizmos.color = Color.blue; //Cambio el color del gizmo para diferenciar distancia de visionado y de disparo
 
@@ -280,8 +280,6 @@ public class Enemy : MonoBehaviour
 
             if (Vector3.Distance (transform.position, target.position) < colliderLimit)
             {
-                Destroy (target.gameObject);
-
                 /*PatrolAgain ();
                 actualState = state.PATROL;
                 backToPatrol = true;
@@ -290,7 +288,8 @@ public class Enemy : MonoBehaviour
                 {
                     if (enemy.actualState != state.PATROL)
                     {
-                        enemy.PatrolAgain ();
+                        enemy.StartCoroutine ("WaitABit");
+                        //enemy.PatrolAgain ();
                         /*enemy.actualState = state.PATROL;
                         enemy.backToPatrol = true;
                         enemy.target = enemy.auxTarget;*/
@@ -389,30 +388,34 @@ public class Enemy : MonoBehaviour
     }
 
 
-    public void checkAlert (Transform position)//El personaje llama a esta funcion de los enemigos que iran a investigar la posicion desde la que se ha mandado la señal
+    // Every enemy inside the area where the main character's clap can be heard will be called, enemies can also seek help from nearby allies.
+    public void checkAlert (Transform position)
     {
-        if (actualState == state.ALERT)
+        if (actualState != state.CHASE) 
         {
-            Destroy (target.gameObject);
-        }
-
-        actualState = state.ALERT;
-        backToPatrol = false;
-        target = position;
-        unit.target = target;
-
-        unit.GetPath ();
-
-        foreach (Enemy enemy in enemies)
-        {
-            if (Vector3.Distance (transform.position, enemy.transform.position) < 10)
+            if (actualState == state.ALERT)
             {
-                enemy.actualState = state.ALERT;
-                enemy.backToPatrol = false;
-                enemy.target = position;
-                enemy.unit.target = enemy.target;
+                Destroy (target.gameObject);
+            }
 
-                enemy.unit.GetPath ();
+            actualState = state.ALERT;
+            backToPatrol = false;
+            target = position;
+            unit.target = target;
+
+            unit.GetPath ();
+
+            foreach (Enemy enemy in enemies)
+            {
+                if (Vector3.Distance (transform.position, enemy.transform.position) < 10)
+                {
+                    enemy.actualState = state.ALERT;
+                    enemy.backToPatrol = false;
+                    enemy.target = position;
+                    enemy.unit.target = enemy.target;
+
+                    enemy.unit.GetPath ();
+                }
             }
         }
     }
@@ -517,5 +520,14 @@ public class Enemy : MonoBehaviour
                 e.PatrolAgain ();
             }
         }
+    }
+
+
+    IEnumerator WaitABit () 
+    {
+        yield return new WaitForSeconds (1);
+
+        Destroy (target.gameObject);
+        PatrolAgain ();
     }
 }

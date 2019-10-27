@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour
     private Vector3[] path;
     private int targetIndex;
     private Enemy enemy;
-    private float colliderLimit, turnSpd;
+    private float colliderLimit;
     private bool stuck;
     private RaycastHit hit;
     private PlayerInteraction playerInt;
@@ -25,7 +25,6 @@ public class Unit : MonoBehaviour
         obstaclesLayer = LayerMask.GetMask ("obstacleMask");
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
-        turnSpd = enemy.normalTurnSpd;
         stuck = false;
         playerInt = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteraction> ();
         alertSpd = enemy.normalMoveSpd;
@@ -71,6 +70,8 @@ public class Unit : MonoBehaviour
                 CancelInvoke ("GetPath");
             }
         }
+
+
         /*else 
         {
             Vector3 lookDirection = (this.transform.position - target.position).normalized;
