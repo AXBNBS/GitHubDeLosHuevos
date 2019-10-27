@@ -69,7 +69,7 @@ public class EnemyChaney : MonoBehaviour
         viewAngle = 120f;
         //viewRadiusShoot = viewRadius / 1.5f; //Distancia donde dispararía el enemigo
 
-        light = light.GetComponent<Light> ();
+        light = this.gameObject.GetComponentInChildren<Light> ();
         auxTarget = target;
 
         animator = this.GetComponentInChildren<Animator> ();
