@@ -10,22 +10,23 @@ public class Unit : MonoBehaviour
     public Transform target;
 
     [SerializeField] private float alertSpd, chaseSpd;
-    private LayerMask obstaclesLayer;
+    private LayerMask enemiesLay;
     private Vector3[] path;
     private int targetIndex;
     private Enemy enemy;
     private float colliderLimit;
-    private RaycastHit hit;
     private PlayerInteraction playerInt;
+    private bool wait;
 
 
     private void Start ()
     {
-        obstaclesLayer = LayerMask.GetMask ("obstacleMask");
+        enemiesLay = LayerMask.GetMask ("Enemies");
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
         playerInt = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteraction> ();
         alertSpd = enemy.normalMoveSpd;
+        wait = false;
     }
 
 
@@ -37,9 +38,9 @@ public class Unit : MonoBehaviour
             InvokeRepeating ("GetPath", 0, 1);
         }
 
-        if (enemy.actualState == Enemy.state.PATROL)
+        if (enemy.backToPatrol == false && enemy.actualState == Enemy.state.PATROL)
         {
-            if (enemy.backToPatrol == true)
+            /*if (enemy.backToPatrol == true)
             {
                 /*if (Physics.Linecast(this.transform.position, this.transform.position + this.transform.forward * (colliderLimit + 0.4f), out hit, obstaclesLayer) == true)
                 {
@@ -57,21 +58,17 @@ public class Unit : MonoBehaviour
 
                     print("stuck");
                     GetPath ();
-                }*/
+                }
             }
             else
-            {
+            {*/
                 StopAllCoroutines ();
 
                 CancelInvoke ("GetPath");
-            }
+            //}
         }
 
-
-        /*if ((enemy.actualState != Enemy.state.PATROL || enemy.backToPatrol == true) && Physics.Raycast (this.transform.position, this.transform.forward, colliderLimit * 2) == true) 
-        {
-
-        }*/
+        wait = enemy.actualState != Enemy.state.PATROL && Physics.Raycast (this.transform.position, this.transform.forward, colliderLimit * 2, enemiesLay, QueryTriggerInteraction.Collide) == true;
     }
 
 
@@ -128,6 +125,7 @@ public class Unit : MonoBehaviour
 
     IEnumerator FollowPath ()
     {
+        print("following");
         if (path != null && path.Length > 0) 
         {
             Vector3 currentWaypoint = path[0];
@@ -146,13 +144,16 @@ public class Unit : MonoBehaviour
 
                     currentWaypoint = path[targetIndex];
                 }
-                if (enemy.actualState == Enemy.state.ALERT)
+                if (wait == false) 
                 {
-                    this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, alertSpd * Time.deltaTime);
-                }
-                else 
-                {
-                    this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, chaseSpd * Time.deltaTime);
+                    if (enemy.actualState == Enemy.state.ALERT)
+                    {
+                        this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, alertSpd * Time.deltaTime);
+                    }
+                    else
+                    {
+                        this.transform.position = Vector3.MoveTowards (this.transform.position, currentWaypoint, chaseSpd * Time.deltaTime);
+                    }
                 }
 
                 //print(this.transform.position);

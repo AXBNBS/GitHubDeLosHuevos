@@ -198,11 +198,14 @@ public class Enemy : MonoBehaviour
         }
         else 
         {
-            Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
-            Vector3 targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
-            Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
+            if (PlayerStats.Instance.playerInvisible == false || actualState != state.CHASE) 
+            {
+                Vector3 lookDirection = new Vector3(target.position.x - transform.position.x, target.position.y - transform.position.y, target.position.z - transform.position.z).normalized;
+                Vector3 targetRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+                Quaternion targetRotationOnlyY = Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
 
-            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
+                this.transform.rotation = Quaternion.Slerp (this.transform.rotation, targetRotationOnlyY, normalTurnSpd * Time.deltaTime);
+            }
         }
 
         // The enemy's speed will be drastically reduced if it's close to an obstacle.
