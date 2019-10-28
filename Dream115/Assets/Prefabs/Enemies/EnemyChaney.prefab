@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 8748211041554368556}
   - component: {fileID: 8748211041554368557}
   - component: {fileID: 392554140}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: EnemyChaney
   m_TagString: EnemyChaney
   m_Icon: {fileID: 0}

@@ -15,7 +15,6 @@ public class Unit : MonoBehaviour
     private int targetIndex;
     private Enemy enemy;
     private float colliderLimit;
-    private bool stuck;
     private RaycastHit hit;
     private PlayerInteraction playerInt;
 
@@ -25,7 +24,6 @@ public class Unit : MonoBehaviour
         obstaclesLayer = LayerMask.GetMask ("obstacleMask");
         enemy = this.gameObject.GetComponent<Enemy> ();
         colliderLimit = this.gameObject.GetComponent<CapsuleCollider>().radius;
-        stuck = false;
         playerInt = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteraction> ();
         alertSpd = enemy.normalMoveSpd;
     }
@@ -43,14 +41,12 @@ public class Unit : MonoBehaviour
         {
             if (enemy.backToPatrol == true)
             {
-                if (stuck == true && Physics.Linecast(this.transform.position, this.transform.position + this.transform.forward * (colliderLimit + 0.4f), out hit, obstaclesLayer) == true)
+                /*if (Physics.Linecast(this.transform.position, this.transform.position + this.transform.forward * (colliderLimit + 0.4f), out hit, obstaclesLayer) == true)
                 {
                     print("pushed");
-                    this.transform.Translate(hit.normal * 3);
-                    GetPath();
-
-                    stuck = false;
-                }
+                    this.transform.Translate (hit.normal * 3);
+                    GetPath ();
+                }*/
                 /*print ("stuck");
                 this.transform.Translate (-this.transform.forward);
                 if (this.transform.position == lastFramePos && Physics.Linecast (this.transform.position, this.transform.position + this.transform.forward * 10, obstaclesLayer) == true) 
@@ -72,26 +68,9 @@ public class Unit : MonoBehaviour
         }
 
 
-        /*else 
+        /*if ((enemy.actualState != Enemy.state.PATROL || enemy.backToPatrol == true) && Physics.Raycast (this.transform.position, this.transform.forward, colliderLimit * 2) == true) 
         {
-            Vector3 lookDirection = (this.transform.position - target.position).normalized;
-            float targetRotationY = Quaternion.LookRotation(lookDirection).eulerAngles.y;
-            //targetRotationOnlyY = Quaternion.Euler(this.transform.rotation.eulerAngles.x, targetRotation.y, this.transform.rotation.eulerAngles.z);
 
-            this.transform.rotation = Quaternion.Slerp (this.transform.rotation, Quaternion.Euler (this.transform.rotation.eulerAngles.x, targetRotationY, this.transform.rotation.eulerAngles.z), turnSpd * Time.deltaTime);
-        }*/
-        //print(IsInvoking("GetPath"));
-        /*if (target == null)
-        {
-            StopCoroutine ("FollowPath");
-        }
-        else 
-        {
-            PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
-        }*/
-        /*if (target != null) 
-        {
-            PathRequestManager.RequestPath (this.transform.position, target.position, OnPathFound);
         }*/
     }
 
@@ -136,7 +115,6 @@ public class Unit : MonoBehaviour
 
     public void OnPathFound (Vector3[] newPath, bool pathSuccessful)
     {
-        stuck = !pathSuccessful;
         if (pathSuccessful == true)
         {
             path = newPath;

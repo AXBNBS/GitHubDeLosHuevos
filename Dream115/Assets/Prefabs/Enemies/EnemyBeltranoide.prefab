@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 3016831278467655810}
   - component: {fileID: 3016831278467655813}
   - component: {fileID: 3016831278467655812}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: EnemyBeltranoide
   m_TagString: Enemy
   m_Icon: {fileID: 0}

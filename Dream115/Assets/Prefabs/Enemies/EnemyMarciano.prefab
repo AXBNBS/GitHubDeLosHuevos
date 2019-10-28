@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 2775612940941549269}
   - component: {fileID: 101006981010207991}
   - component: {fileID: 2149505626583869418}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: EnemyMarciano
   m_TagString: Enemy
   m_Icon: {fileID: 0}
